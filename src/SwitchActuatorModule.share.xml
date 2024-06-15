@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?xml-model href="../../Organization/knxprod-support/knx_project_14/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/14" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
   <op:config name="%SWA_NumChannelsDefault%" value="%N%" />
 
   <ManufacturerData>
@@ -13,6 +13,51 @@
               <ParameterType Id="%AID%_PT-SWANumChannels" Name="SWANumChannels">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
               </ParameterType>
+              <ParameterType Id="%AID%_PT-OperationMode" Name="OperationMode">
+                <TypeRestriction Base="Value" SizeInBit="1">
+                  <Enumeration Text="Schließer" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Öffner" Value="1" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-StatusSend" Name="StatusSend">
+                <TypeRestriction Base="Value" SizeInBit="2" UIHint="DropDown">
+                  <Enumeration Text="Deaktiviert" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Bei Änderung" Value="1" Id="%ENID%" />
+                  <!-- <Enumeration Text="Bei Änderung und Sperre" Value="2" Id="%ENID%" /> -->
+                  <!-- <Enumeration Text="Bei Telegrammeingang" Value="3" Id="%ENID%" /> -->
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-OffOn" Name="OffOn">
+                <TypeRestriction Base="Value" SizeInBit="1" UIHint="DropDown">
+                  <Enumeration Text="Aus" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Ein" Value="1" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-NoChangeOffOn" Name="NoChangeOffOn">
+                <TypeRestriction Base="Value" SizeInBit="2" UIHint="DropDown">
+                  <Enumeration Text="Keine Änderung" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Aus" Value="1" Id="%ENID%" />
+                  <Enumeration Text="Ein" Value="2" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-NoChangeOffOnPrevious" Name="NoChangeOffOnPrevious">
+                <TypeRestriction Base="Value" SizeInBit="3" UIHint="DropDown">
+                  <Enumeration Text="Keine Änderung" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Aus" Value="1" Id="%ENID%" />
+                  <Enumeration Text="Ein" Value="2" Id="%ENID%" />
+                  <Enumeration Text="Vorheriger Zustand, Schalten nachholen" Value="3" Id="%ENID%" />
+                  <Enumeration Text="Vorheriger Zustand" Value="4" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-Scene" Name="Scene">
+                <TypeRestriction Base="Value" SizeInBit="3" UIHint="DropDown">
+                  <Enumeration Text="Keine Änderung" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Aus" Value="1" Id="%ENID%" />
+                  <Enumeration Text="Ein" Value="2" Id="%ENID%" />
+                  <Enumeration Text="Vorheriger Zustand, Schalten nachholen" Value="3" Id="%ENID%" />
+                  <Enumeration Text="Vorheriger Zustand" Value="4" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
             </ParameterTypes>
             <Parameters>
               <Union SizeInBit="8">
@@ -24,9 +69,14 @@
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
             </ParameterRefs>
             <ComObjectTable>
+              <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="1" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
             </ComObjectTable>
             <ComObjectRefs>
+              <ComObjectRef Id="%AID%_O-%TT%00001_R-%TT%0000101" RefId="%AID%_O-%TT%00001" />
             </ComObjectRefs>
+            <Script>
+              <op:include href="SwitchActuatorModule.script.js" type="script" />
+            </Script>
           </Static>
           <Dynamic>
             <Channel Id="%AID%_CH-%PREFIX%" Number="%PREFIX%" Name="Main" Text="Schaltaktor" Icon="electric-switch">
@@ -37,6 +87,7 @@
                 <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
               </ParameterBlock>
+              <op:include href="SwitchActuatorModule.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SWA" IsInner="true" />
             </Channel>
           </Dynamic>
         </ApplicationProgram>
