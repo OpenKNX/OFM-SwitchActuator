@@ -13,6 +13,13 @@
               <ParameterType Id="%AID%_PT-SWANumChannels" Name="SWANumChannels">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
               </ParameterType>
+              <ParameterType Id="%AID%_PT-ChannelActive" Name="ChannelActive">
+                <TypeRestriction Base="Value" SizeInBit="2">
+                  <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Aktiv" Value="1" Id="%ENID%" />
+                  <Enumeration Text="Funktionslos" Value="2" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
               <ParameterType Id="%AID%_PT-OperationMode" Name="OperationMode">
                 <TypeRestriction Base="Value" SizeInBit="1">
                   <Enumeration Text="Schließer" Value="0" Id="%ENID%" />
@@ -25,12 +32,6 @@
                   <Enumeration Text="Bei Änderung" Value="1" Id="%ENID%" />
                   <!-- <Enumeration Text="Bei Änderung und Sperre" Value="2" Id="%ENID%" /> -->
                   <!-- <Enumeration Text="Bei Telegrammeingang" Value="3" Id="%ENID%" /> -->
-                </TypeRestriction>
-              </ParameterType>
-              <ParameterType Id="%AID%_PT-OffOn" Name="OffOn">
-                <TypeRestriction Base="Value" SizeInBit="1" UIHint="DropDown">
-                  <Enumeration Text="Aus" Value="0" Id="%ENID%" />
-                  <Enumeration Text="Ein" Value="1" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
               <ParameterType Id="%AID%_PT-NoChangeOffOn" Name="NoChangeOffOn">
@@ -56,6 +57,14 @@
                   <Enumeration Text="Ein" Value="2" Id="%ENID%" />
                   <Enumeration Text="Vorheriger Zustand, Schalten nachholen" Value="3" Id="%ENID%" />
                   <Enumeration Text="Vorheriger Zustand" Value="4" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-SceneBehavior" Name="SceneBehavior">
+                <TypeRestriction Base="Value" SizeInBit="2" UIHint="DropDown">
+                  <Enumeration Text="Aus" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Ein" Value="1" Id="%ENID%" />
+                  <Enumeration Text="Sperren" Value="2" Id="%ENID%" />
+                  <Enumeration Text="Entsperren" Value="3" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
             </ParameterTypes>

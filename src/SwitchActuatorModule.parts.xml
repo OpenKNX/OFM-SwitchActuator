@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+  <ManufacturerData>
+    <Manufacturer RefId="M-00FA">
+      <ApplicationPrograms>
+        <ApplicationProgram Id="%AID%" ProgramType="ApplicationProgram" MaskVersion="MV-07B0" Name="SWT" LoadProcedureStyle="MergedProcedure" PeiType="0" DefaultLanguage="de" DynamicTableManagement="false" Linkable="true" MinEtsVersion="4.0" ApplicationNumber="0" ApplicationVersion="0" ReplacesVersions="0">
+          <op:partParams name="SCENE">
+            <!-- this ist just for documentation reasons, as an example for the caller -->
+            <op:param name="%ParamOffset%" value="58" />
+            <op:param name="%Sl%" value="A" /> <!-- Scene letter -->
+            <op:param name="%PPP%" value="26" />
+          </op:partParams>
+          <Static>
+            <Parameters>
+              <Union SizeInBit="16">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="%ParamOffset%" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+0%" Name="Channel%Z%Scene%Sl%Active" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Szene aktiv" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+2%" Name="Channel%Z%Scene%Sl%Behavior" Offset="0" BitOffset="1" ParameterType="%AID%_PT-SceneBehavior" Text="Szene Verhalten" Value="1" />
+                <!-- 5 bit free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+1%" Name="Channel%Z%Scene%Sl%Number" Offset="1" BitOffset="0" ParameterType="%AID%_PT-ValueSceneIn" Text="Szene Nummer" Value="1" />
+              </Union>
+            </Parameters>
+            <ParameterRefs>
+              <ParameterRef Id="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01" RefId="%AID%_UP-%TT%%CC%%PPP+0%" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%%PPP+1%_R-%TT%%CC%%PPP+1%01" RefId="%AID%_UP-%TT%%CC%%PPP+1%" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%%PPP+2%_R-%TT%%CC%%PPP+2%01" RefId="%AID%_UP-%TT%%CC%%PPP+2%" />
+            </ParameterRefs>
+          </Static>
+          <Dynamic>
+            <ChannelIndependentBlock>
+              <ParameterBlock Id="%AID%_PB-nnn" Name="SzenePart">
+                <ParameterSeparator Id="%AID%_PS-nnn" Text="Szene %Sl%" UIHint="Headline" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01" IndentLevel="1" />
+                <choose ParamRefId="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01">
+                  <when test="1">
+                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+1%_R-%TT%%CC%%PPP+1%01" IndentLevel="1" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+2%_R-%TT%%CC%%PPP+2%01" IndentLevel="1" />
+                  </when>
+                </choose>
+              </ParameterBlock>
+            </ChannelIndependentBlock>
+          </Dynamic>
+        </ApplicationProgram>
+      </ApplicationPrograms>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>
