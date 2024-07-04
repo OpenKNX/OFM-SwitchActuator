@@ -7,7 +7,6 @@
 class SwitchActuator : public OpenKNX::Module
 {
   public:
-
     SwitchActuator();
     ~SwitchActuator();
 
@@ -19,10 +18,7 @@ class SwitchActuator : public OpenKNX::Module
     const std::string version() override;
 
   private:
-
-    // channel handling
-    SwitchActuatorChannel *mChannel[SWA_ChannelCount];
-    uint8_t mNumChannels;
+    SwitchActuatorChannel *channel[SWA_ChannelCount];
 };
 
 extern SwitchActuator openknxSwitchActuatorModule;

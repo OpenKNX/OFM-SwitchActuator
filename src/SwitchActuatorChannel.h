@@ -7,6 +7,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:
     const std::string name() override;
+    bool statusDuringLock;
 
   protected:
 
@@ -14,7 +15,8 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     SwitchActuatorChannel(uint8_t iChannelNumber);
     ~SwitchActuatorChannel();
 
-    void processInputKo(GroupObject &iKo, int8_t iKoIndex = -1);
+    void processInputKo(GroupObject &iKo);
+    void doSwitch(bool active);
     void setup();
     void loop();
 };

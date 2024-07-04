@@ -24,6 +24,17 @@ const std::string SwitchActuator::version()
 
 void SwitchActuator::processInputKo(GroupObject &iKo)
 {
+    switch (iKo.asap())
+    {
+        case SWA_KoCentralFunction:
+            // #ToDo
+            break;
+    }
+
+    for (uint8_t i = 0; i < ParamSWA_VisibleChannels; i++)
+    {
+        channel[i]->processInputKo(iKo);
+    }
 }
 
 void SwitchActuator::loop()
@@ -32,10 +43,9 @@ void SwitchActuator::loop()
 
 void SwitchActuator::setup()
 {
-    mNumChannels = ParamSWA_VisibleChannels; // knx.paramByte(SWA_PMChannels);
-    for (uint8_t lIndex = 0; lIndex < mNumChannels; lIndex++)
+    for (uint8_t i = 0; i < ParamSWA_VisibleChannels; i++)
     {
-        mChannel[lIndex] = new SwitchActuatorChannel(lIndex);
-        mChannel[lIndex]->setup();
+        channel[i] = new SwitchActuatorChannel(i);
+        channel[i]->setup();
     }
 }
