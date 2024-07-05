@@ -1,5 +1,5 @@
 {
-    "name": "OFM-SwitchActuatorModule",
+    "name": "OFM-SwitchActuator",
     "version": "0.1",
     "description": "Switch actuator module for the knx stack, can be embedded in an ETS application",
     "homepage": "https://openknx.de",
