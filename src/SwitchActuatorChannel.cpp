@@ -1,5 +1,5 @@
 #include "SwitchActuatorChannel.h"
-#include "SwitchActuator.h"
+#include "SwitchActuatorModule.h"
 
 SwitchActuatorChannel::SwitchActuatorChannel(uint8_t iChannelNumber)
 {
@@ -68,81 +68,18 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorChannel::doSwitch(bool active)
 {
+    if (_channelIndex >= OPENKNX_SWA_CHANNEL_COUNT)
+    {
+        logErrorP("Channel index %u is too high for hardware channel count %u", _channelIndex, OPENKNX_SWA_CHANNEL_COUNT);
+        return;
+    }
+
     // invert in case of operation mode is opening contact
     bool activeSet = ParamSWA_ChannelOperationMode ? !active : active;
-
     if (activeSet)
-    {
-        uint8_t pinNumber;
-        switch (_channelIndex)
-        {
-            case 0:
-                pinNumber = RELAY_CH0_SET;
-                break;
-            case 1:
-                pinNumber = RELAY_CH1_SET;
-                break;
-            case 2:
-                pinNumber = RELAY_CH2_SET;
-                break;
-            case 3:
-                pinNumber = RELAY_CH3_SET;
-                break;
-            case 4:
-                pinNumber = RELAY_CH4_SET;
-                break;
-            case 5:
-                pinNumber = RELAY_CH5_SET;
-                break;
-            case 6:
-                pinNumber = RELAY_CH6_SET;
-                break;
-            case 7:
-                pinNumber = RELAY_CH7_SET;
-                break;
-            default:
-                logErrorP("PIN number for channel %u unknown", _channelIndex);
-                return;
-        }
-
-        digitalWrite(pinNumber, RELAY_SET_ACTIVE_ON == HIGH ? true : false);
-    }
+        digitalWrite(RELAY_SET_PINS[_channelIndex], OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? true : false);
     else
-    {
-        uint8_t pinNumber;
-        switch (_channelIndex)
-        {
-            case 0:
-                pinNumber = RELAY_CH0_RESET;
-                break;
-            case 1:
-                pinNumber = RELAY_CH1_RESET;
-                break;
-            case 2:
-                pinNumber = RELAY_CH2_RESET;
-                break;
-            case 3:
-                pinNumber = RELAY_CH3_RESET;
-                break;
-            case 4:
-                pinNumber = RELAY_CH4_RESET;
-                break;
-            case 5:
-                pinNumber = RELAY_CH5_RESET;
-                break;
-            case 6:
-                pinNumber = RELAY_CH6_RESET;
-                break;
-            case 7:
-                pinNumber = RELAY_CH7_RESET;
-                break;
-            default:
-                logErrorP("PIN number for channel %u unknown", _channelIndex);
-                return;
-        }
-
-        digitalWrite(pinNumber, RELAY_RESET_ACTIVE_ON == HIGH ? true : false);
-    }
+        digitalWrite(RELAY_RESET_PINS[_channelIndex], OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? true : false);
 
     if (ParamSWA_ChannelStatusSend)
         KoSWA_ChannelStatus.value(active, DPT_Switch);

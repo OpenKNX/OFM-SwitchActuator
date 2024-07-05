@@ -4,11 +4,14 @@
 #include "hardware.h"
 #include "knxprod.h"
 
-class SwitchActuator : public OpenKNX::Module
+const uint8_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SET_PINS};
+const uint8_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_RESET_PINS};
+
+class SwitchActuatorModule : public OpenKNX::Module
 {
   public:
-    SwitchActuator();
-    ~SwitchActuator();
+    SwitchActuatorModule();
+    ~SwitchActuatorModule();
 
     void processInputKo(GroupObject &iKo);
     void setup();
@@ -21,4 +24,4 @@ class SwitchActuator : public OpenKNX::Module
     SwitchActuatorChannel *channel[SWA_ChannelCount];
 };
 
-extern SwitchActuator openknxSwitchActuatorModule;
+extern SwitchActuatorModule openknxSwitchActuatorModule;

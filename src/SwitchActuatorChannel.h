@@ -1,8 +1,6 @@
 #pragma once
 #include "OpenKNX.h"
 
-class SwitchActuator;
-
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:

@@ -1,28 +1,28 @@
-#include "SwitchActuator.h"
+#include "SwitchActuatorModule.h"
 #include "OpenKNX.h"
 #include "ModuleVersionCheck.h"
 
-SwitchActuator openknxSwitchActuatorModule;
+SwitchActuatorModule openknxSwitchActuatorModule;
 
-SwitchActuator::SwitchActuator()
+SwitchActuatorModule::SwitchActuatorModule()
 {
 }
 
-SwitchActuator::~SwitchActuator()
+SwitchActuatorModule::~SwitchActuatorModule()
 {
 }
 
-const std::string SwitchActuator::name()
+const std::string SwitchActuatorModule::name()
 {
     return "SwitchActuator";
 }
 
-const std::string SwitchActuator::version()
+const std::string SwitchActuatorModule::version()
 {
     return MODULE_SwitchActuatorModule_Version;
 }
 
-void SwitchActuator::processInputKo(GroupObject &iKo)
+void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 {
     switch (iKo.asap())
     {
@@ -37,11 +37,11 @@ void SwitchActuator::processInputKo(GroupObject &iKo)
     }
 }
 
-void SwitchActuator::loop()
+void SwitchActuatorModule::loop()
 {
 }
 
-void SwitchActuator::setup()
+void SwitchActuatorModule::setup()
 {
     for (uint8_t i = 0; i < ParamSWA_VisibleChannels; i++)
     {
