@@ -72,6 +72,7 @@
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00001" Name="VisibleChannels" ParameterType="%AID%_PT-SWANumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%SWA_NumChannelsDefault%" SuffixText=" von %N%" />
+                <!-- 7 bits free -->
               </Union>
             </Parameters>
             <ParameterRefs>

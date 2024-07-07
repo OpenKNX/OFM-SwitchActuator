@@ -1,11 +1,17 @@
 #pragma once
 #include "OpenKNX.h"
 
+#define RELAY_BISTABLE_IMPULS_LENGTH 50
+
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:
     const std::string name() override;
     bool statusDuringLock;
+    uint32_t relayBistableImpulsTimer = 0;
+
+    void doSwitch(bool active);
+    void relaisOff();
 
   protected:
 
@@ -14,7 +20,6 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     ~SwitchActuatorChannel();
 
     void processInputKo(GroupObject &iKo);
-    void doSwitch(bool active);
     void setup();
     void loop();
 };

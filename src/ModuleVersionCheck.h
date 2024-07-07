@@ -1,9 +1,9 @@
 #include "versions.h"
 
 // Change the following 3 lines and adopt to your module names
-#define ModuleVersion_ModuleName "SwitchActuatorModule"
+#define ModuleVersion_ModuleName "SwitchActuator"
 #define ModuleVersion_knxprod_h SWA_ModuleVersion
-#define ModuleVersion_version_h MODULE_SwitchActuatorModule_ETS
+#define ModuleVersion_version_h MODULE_SwitchActuator_ETS
 
 // ATTENTION: This file is evaluated during build, by OpenKNXproducer and some build scripts.
 // No changes needed behind this point
