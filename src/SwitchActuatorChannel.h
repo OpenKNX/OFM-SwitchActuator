@@ -1,8 +1,6 @@
 #pragma once
 #include "OpenKNX.h"
 
-#define RELAY_BISTABLE_IMPULS_LENGTH 50
-
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:

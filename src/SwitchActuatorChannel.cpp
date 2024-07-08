@@ -126,7 +126,7 @@ void SwitchActuatorChannel::doSwitch(bool active)
 
 void SwitchActuatorChannel::loop()
 {
-    if (relayBistableImpulsTimer > 0 && delayCheck(relayBistableImpulsTimer, RELAY_BISTABLE_IMPULS_LENGTH))
+    if (relayBistableImpulsTimer > 0 && delayCheck(relayBistableImpulsTimer, OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH))
     {
         relaisOff();
         relayBistableImpulsTimer = 0;
