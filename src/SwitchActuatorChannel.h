@@ -1,6 +1,11 @@
 #pragma once
 #include "OpenKNX.h"
 
+#define RELAY_GPIO_SET_ON    OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? HIGH : LOW
+#define RELAY_GPIO_SET_OFF   OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? LOW : HIGH
+#define RELAY_GPIO_RESET_ON  OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? HIGH : LOW
+#define RELAY_GPIO_RESET_OFF OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? LOW : HIGH
+
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:
@@ -8,7 +13,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     bool statusDuringLock;
     uint32_t relayBistableImpulsTimer = 0;
 
-    void doSwitch(bool active);
+    void processSwitchInput(bool newActive);
     void relaisOff();
 
   protected:
@@ -20,4 +25,9 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void processInputKo(GroupObject &iKo);
     void setup();
     void loop();
+
+    void doSwitch(bool active);
+    bool isRelayActive();
+    void savePower();
+    bool restorePower();
 };

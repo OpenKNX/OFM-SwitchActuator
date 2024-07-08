@@ -21,30 +21,20 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
     bool newActive;
     switch (SWA_KoCalcIndex(iKo.asap()))
     {
+        case SWA_KoCentralFunction:
+            if (ParamSWA_ChannelCentralFunction)
+            {
+                newActive = iKo.value(DPT_Switch);
+                logDebugP("SWA_KoCentralFunction: %u", newActive);
+
+                processSwitchInput(newActive);
+            }
+            break;
         case SWA_KoChannelSwitch:
             newActive = iKo.value(DPT_Switch);
             logDebugP("SWA_KoChannelSwitch: %u", newActive);
 
-            if (KoSWA_ChannelLockStatus.value(DPT_Switch))
-            {
-                logDebugP("Channel is locked");
-
-                if (ParamSWA_ChannelBehaviorUnlock == 3)
-                {
-                    statusDuringLock = newActive;
-                    logDebugP("statusDuringLock: %u", newActive);
-                }
-
-                break;
-            }
-
-            if (newActive == (bool)KoSWA_ChannelStatus.value(DPT_Switch))
-            {
-                logDebugP("New value equals current status");
-                break;
-            }
-
-            doSwitch(newActive);
+            processSwitchInput(newActive);
             break;
         case SWA_KoChannelLock:
             newActive = iKo.value(DPT_Switch);
@@ -86,6 +76,30 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
     }
 }
 
+void SwitchActuatorChannel::processSwitchInput(bool newActive)
+{
+    if (KoSWA_ChannelLockStatus.value(DPT_Switch))
+    {
+        logDebugP("Channel is locked");
+
+        if (ParamSWA_ChannelBehaviorUnlock == 3)
+        {
+            statusDuringLock = newActive;
+            logDebugP("statusDuringLock: %u", newActive);
+        }
+
+        return;
+    }
+
+    if (newActive == (bool)KoSWA_ChannelStatus.value(DPT_Switch))
+    {
+        logDebugP("New value equals current status");
+        return;
+    }
+
+    doSwitch(newActive);
+}
+
 void SwitchActuatorChannel::doSwitch(bool active)
 {
     if (_channelIndex >= OPENKNX_SWA_CHANNEL_COUNT)
@@ -101,13 +115,13 @@ void SwitchActuatorChannel::doSwitch(bool active)
     bool activeSet = ParamSWA_ChannelOperationMode ? !active : active;
     if (activeSet)
     {
-        logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_SET_PINS[_channelIndex], OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? HIGH : LOW);
-        digitalWrite(RELAY_SET_PINS[_channelIndex], OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? HIGH : LOW);
+        logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
+        digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
     }
     else
     {
-        logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_RESET_PINS[_channelIndex], OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? HIGH : LOW);
-        digitalWrite(RELAY_RESET_PINS[_channelIndex], OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? HIGH : LOW);
+        logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
+        digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
     }
     relayBistableImpulsTimer = delayTimerInit();
 
@@ -116,6 +130,8 @@ void SwitchActuatorChannel::doSwitch(bool active)
         logDebugP("Set channel status %u", active);
         KoSWA_ChannelStatus.value(active, DPT_Switch);
     }
+    else
+        KoSWA_ChannelStatus.valueNoSend(active, DPT_Switch);
 
     if (ParamSWA_ChannelStatusInverted)
     {
@@ -135,19 +151,43 @@ void SwitchActuatorChannel::loop()
 
 void SwitchActuatorChannel::setup()
 {
-    relaisOff();
+    // preset PIN state before changing PIN mode
+    digitalWriteFast(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
+    digitalWriteFast(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
 
     pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT);
     pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT);
+
+    // set it again the standard way, just in case
+    relaisOff();
 }
 
 void SwitchActuatorChannel::relaisOff()
 {
-    logDebugP("Write relay state off to GPIO %u with value %u", RELAY_SET_PINS[_channelIndex], OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? LOW : HIGH);
-    digitalWrite(RELAY_SET_PINS[_channelIndex], OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? LOW : HIGH);
+    logDebugP("Write relay state off to GPIO %u with value %u", RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
+    digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
 
-    logDebugP("Write relay state off to GPIO %u with value %u", RELAY_RESET_PINS[_channelIndex], OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? LOW : HIGH);
-    digitalWrite(RELAY_RESET_PINS[_channelIndex], OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? LOW : HIGH);
+    logDebugP("Write relay state off to GPIO %u with value %u", RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
+    digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
+}
+
+bool SwitchActuatorChannel::isRelayActive()
+{
+    return (bool)KoSWA_ChannelStatus.value(DPT_Switch);
+}
+
+void SwitchActuatorChannel::savePower()
+{
+    if (ParamSWA_ChannelBehaviorPowerLoss > 0)
+        doSwitch(ParamSWA_ChannelBehaviorPowerLoss == 2);
+}
+
+bool SwitchActuatorChannel::restorePower()
+{
+    if (ParamSWA_ChannelBehaviorPowerRegain > 0)
+        doSwitch(ParamSWA_ChannelBehaviorPowerRegain == 2);
+    
+    return true;
 }
 
 const std::string SwitchActuatorChannel::name()

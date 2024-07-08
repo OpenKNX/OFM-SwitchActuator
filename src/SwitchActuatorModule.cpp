@@ -27,18 +27,8 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
     logDebugP("processInputKo");
     logIndentUp();
 
-    switch (iKo.asap())
-    {
-        case SWA_KoCentralFunction:
-            logDebugP("SWA_KoCentralFunction");
-            // #ToDo
-            break;
-    }
-
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-    {
         channel[i]->processInputKo(iKo);
-    }
 
     logIndentDown();
 }
@@ -56,4 +46,87 @@ void SwitchActuatorModule::setup()
         channel[i] = new SwitchActuatorChannel(i);
         channel[i]->setup();
     }
+}
+
+void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
+{
+    if (size == 0)
+        return;
+
+    logDebugP("Reading state from flash");
+    logIndentUp();
+
+    uint8_t version = openknx.flash.readByte();
+    if (version != OPENKNX_SWA_FLASH_VERSION)
+    {
+        logDebugP("Invalid flash version %u", version);
+        return;
+    }
+
+    uint32_t magicWord = openknx.flash.readInt();
+    if (magicWord != OPENKNX_SWA_FLASH_MAGIC_WORD)
+    {
+        logDebugP("Flash content invalid");
+        return;
+    }
+
+    uint8_t relayChannelsStored = openknx.flash.readByte();
+
+    uint8_t byteValue = 0;
+    for (uint8_t i = 0; i < MIN(relayChannelsStored, MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT)); i++)
+    {
+        uint8_t bitIndex = i % 8;
+        if (bitIndex == 0)
+            byteValue = openknx.flash.readByte();
+
+        channel[i]->doSwitch(bitRead(byteValue, bitIndex));
+    }
+    
+    logIndentDown();
+}
+
+void SwitchActuatorModule::writeFlash()
+{
+    openknx.flash.writeByte(OPENKNX_SWA_FLASH_VERSION);
+    openknx.flash.writeInt(OPENKNX_SWA_FLASH_MAGIC_WORD);
+
+    openknx.flash.writeByte(MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT));
+
+    uint8_t byteValue = 0;
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+    {
+        uint8_t bitIndex = i % 8;
+        if (bitIndex == 0)
+        {
+            if (i > 0)
+                openknx.flash.writeByte(byteValue);
+
+            byteValue = 0;
+        }
+
+        bitWrite(byteValue, bitIndex, channel[i]->isRelayActive());
+    }
+    openknx.flash.writeByte(byteValue);
+
+    logDebugP("Relays state written to flash");
+}
+
+uint16_t SwitchActuatorModule::flashSize()
+{
+    return 6 + ceil(MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT) / 8.0);
+}
+
+void SwitchActuatorModule::savePower()
+{
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+        channel[i]->savePower();
+}
+
+bool SwitchActuatorModule::restorePower()
+{
+    bool success = true;
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+        success &= channel[i]->restorePower();
+    
+    return success;
 }

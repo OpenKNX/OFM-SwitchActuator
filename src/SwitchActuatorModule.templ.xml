@@ -183,6 +183,11 @@
                         <choose ParamRefId="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901">
                           <when test=">0">
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%012_R-%TT%%CC%01201" IndentLevel="1" />
+                            <choose ParamRefId="%AID%_UP-%TT%%CC%012_R-%TT%%CC%01201">
+                              <when test="1">
+                                <ComObjectRefRef RefId="%AID%_O-%TT%%CC%003_R-%TT%%CC%00301" />
+                              </when>
+                            </choose>
 
                             <!-- Status Cyclic pattern -->
                             <ParameterBlock Id="%AID%_PB-nnn" Name="StatusCyclic" Inline="true" Layout="Grid">
@@ -199,11 +204,9 @@
                               <ParameterRefRef RefId="%AID%_UP-%TT%%CC%011_R-%TT%%CC%01101" Cell="1,3" />
                               <ParameterRefRef RefId="%AID%_UP-%TT%%CC%010_R-%TT%%CC%01001" Cell="1,4" />
                             </ParameterBlock>
-
-                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%002_R-%TT%%CC%00201" />
-                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%003_R-%TT%%CC%00301" />
                           </when>
                         </choose>
+                        <ComObjectRefRef RefId="%AID%_O-%TT%%CC%002_R-%TT%%CC%00201" />
 
                         <ParameterSeparator Id="%AID%_PS-nnn" Text="Verhalten" UIHint="Headline" />
                         <ParameterRefRef RefId="%AID%_UP-%TT%%CC%013_R-%TT%%CC%01301" IndentLevel="1" />
