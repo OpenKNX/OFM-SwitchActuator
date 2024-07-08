@@ -14,25 +14,23 @@
             <Parameters>
               <Parameter Id="%AID%_P-%TT%%CC%001" Name="Channel%C%Name" ParameterType="%AID%_PT-Text40Byte" Text="Beschreibung des Kanals" Value="" />
               <Parameter Id="%AID%_P-%TT%%CC%051" Name="Channel%C%Number" ParameterType="%AID%_PT-ValueDpt5" Text="Nummer des Kanals" Value="%C%" Access="None" />
-              <Union SizeInBit="24">
+              <Union SizeInBit="56">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%002" Name="Channel%C%Active" Offset="0" BitOffset="0" ParameterType="%AID%_PT-ChannelActive" Text="Kanalaktivität" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%050" Name="Channel%C%SyncSwitch" Offset="0" BitOffset="2" ParameterType="%AID%_PT-CheckBox" Text="" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%003" Name="Channel%C%OperationMode" Offset="0" BitOffset="3" ParameterType="%AID%_PT-OperationMode" Text="Betriebsmodus" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%008" Name="Channel%C%CentralFunction" Offset="0" BitOffset="4" ParameterType="%AID%_PT-OnOffYesNo" Text="Zentralfunktion" Value="0" />
-                <!-- 3 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%009" Name="Channel%C%StatusSend" Offset="0" BitOffset="5" ParameterType="%AID%_PT-StatusSend" Text="Status senden" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%012" Name="Channel%C%StatusInverted" Offset="0" BitOffset="7" ParameterType="%AID%_PT-OnOffYesNo" Text="Zusätzlicher invertierter Status" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%004" Name="Channel%C%TurnOnDelayBase" ParameterType="%AID%_PT-DelayBase" Offset="1" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%005" Name="Channel%C%TurnOnDelayTime" ParameterType="%AID%_PT-DelayTime" Offset="1" BitOffset="2" Text="Zeit" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%006" Name="Channel%C%TurnOffDelayBase" ParameterType="%AID%_PT-DelayBase" Offset="1" BitOffset="4" Text="Zeitbasis" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%007" Name="Channel%C%TurnOffDelayTime" ParameterType="%AID%_PT-DelayTime" Offset="1" BitOffset="6" Text="Zeit" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%009" Name="Channel%C%StatusSend" Offset="0" BitOffset="0" ParameterType="%AID%_PT-StatusSend" Text="Status senden" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%010" Name="Channel%C%StatusCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="2" BitOffset="1" Text="Zeitbasis" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%011" Name="Channel%C%StatusCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="2" BitOffset="3" Text="Zeit" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%012" Name="Channel%C%StatusInverted" Offset="2" BitOffset="5" ParameterType="%AID%_PT-OnOffYesNo" Text="Zusätzlicher invertierter Status" Value="0" />
-                <!-- 3 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%006" Name="Channel%C%TurnOffDelayBase" ParameterType="%AID%_PT-DelayBase" Offset="3" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%007" Name="Channel%C%TurnOffDelayTime" ParameterType="%AID%_PT-DelayTime" Offset="3" BitOffset="2" Text="Zeit" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%010" Name="Channel%C%StatusCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="5" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%011" Name="Channel%C%StatusCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="5" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
               <Union SizeInBit="16">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="3" BitOffset="0" />
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="7" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%013" Name="Channel%C%BehaviorLock" Offset="0" BitOffset="0" ParameterType="%AID%_PT-NoChangeOffOn" Text="bei Sperren" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%014" Name="Channel%C%BehaviorUnlock" Offset="0" BitOffset="2" ParameterType="%AID%_PT-NoChangeOffOnPrevious" Text="bei Entsperren" Value="0" />
                 <!-- 3 bits free -->
@@ -41,22 +39,21 @@
                 <!-- 4 bits free -->
               </Union>
               <Union SizeInBit="8">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="5" BitOffset="0" />
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="9" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%017" Name="Channel%C%StairLightActive" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Treppenlicht aktivieren" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Channel%C%ScenesActive" Offset="0" BitOffset="1" ParameterType="%AID%_PT-OnOffYesNo" Text="Szenen aktivieren" Value="0" />
                 <!-- 5 bits free -->
                 <Parameter Id="%AID%_UP-%TT%%CC%025" Name="Channel%C%SceneLearn" Offset="0" BitOffset="7" ParameterType="%AID%_PT-OnOffYesNo" Text="Szene lernen" Value="0" />
               </Union>
-              <Union SizeInBit="16">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="6" BitOffset="0" />
+              <Union SizeInBit="40">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="10" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%019" Name="Channel%C%StairTimeBase" ParameterType="%AID%_PT-DelayBase10" Offset="0" BitOffset="0" Text="Zeit für Treppenlicht" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%020" Name="Channel%C%StairTimeTime" ParameterType="%AID%_PT-DelayTime" Offset="0" BitOffset="2" Text="Zeit für Treppenlicht" Value="30" />
-                <Parameter Id="%AID%_UP-%TT%%CC%021" Name="Channel%C%StairRetrigger" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="4" Text="Treppenlicht kann verlängert werden" Value="1" />
-                <Parameter Id="%AID%_UP-%TT%%CC%022" Name="Channel%C%StairOff" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="5" Text="Treppenlicht kann ausgeschaltet werden" Value="1" />
-                <!-- 2 bits free -->
-                <Parameter Id="%AID%_UP-%TT%%CC%023" Name="Channel%C%StairBlinkBase" ParameterType="%AID%_PT-DelayBase10" Offset="1" BitOffset="0" Text="Treppenlicht blinkt im Rhythmus" Value="3" />
-                <Parameter Id="%AID%_UP-%TT%%CC%024" Name="Channel%C%StairBlinkTime" ParameterType="%AID%_PT-DelayTime" Offset="1" BitOffset="2" Text="Treppenlicht blinkt im Rhythmus" Value="0" />
-                <!-- 4 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%021" Name="Channel%C%StairRetrigger" ParameterType="%AID%_PT-OnOffYesNo" Offset="2" BitOffset="0" Text="Treppenlicht kann verlängert werden" Value="1" />
+                <Parameter Id="%AID%_UP-%TT%%CC%022" Name="Channel%C%StairOff" ParameterType="%AID%_PT-OnOffYesNo" Offset="2" BitOffset="1" Text="Treppenlicht kann ausgeschaltet werden" Value="1" />
+                <!-- 6 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%023" Name="Channel%C%StairBlinkBase" ParameterType="%AID%_PT-DelayBase10" Offset="3" BitOffset="0" Text="Treppenlicht blinkt im Rhythmus" Value="3" />
+                <Parameter Id="%AID%_UP-%TT%%CC%024" Name="Channel%C%StairBlinkTime" ParameterType="%AID%_PT-DelayTime" Offset="3" BitOffset="2" Text="Treppenlicht blinkt im Rhythmus" Value="0" />
               </Union>
               <op:usePart name="SCENE" xpath="//Static/Parameters/*" instanceFrom="1" instanceTo="8" />
             </Parameters>

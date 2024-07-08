@@ -11,6 +11,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
   private:
     const std::string name() override;
     bool statusDuringLock;
+    uint32_t statusCyclicSendTimer = 0;
     uint32_t relayBistableImpulsTimer = 0;
 
     void processSwitchInput(bool newActive);

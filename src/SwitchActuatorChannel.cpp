@@ -147,6 +147,12 @@ void SwitchActuatorChannel::loop()
         relaisOff();
         relayBistableImpulsTimer = 0;
     }
+
+    if (statusCyclicSendTimer > 0 && delayCheck(statusCyclicSendTimer, ParamSWA_ChannelStatusCyclicTimeMS))
+    {
+        KoSWA_ChannelStatus.objectWritten();
+        statusCyclicSendTimer = delayTimerInit();
+    }
 }
 
 void SwitchActuatorChannel::setup()
@@ -160,6 +166,9 @@ void SwitchActuatorChannel::setup()
 
     // set it again the standard way, just in case
     relaisOff();
+
+    if (ParamSWA_ChannelStatusCyclicTimeMS > 0)
+        statusCyclicSendTimer = delayTimerInit();
 }
 
 void SwitchActuatorChannel::relaisOff()
