@@ -24,7 +24,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     ~SwitchActuatorChannel();
 
     void processInputKo(GroupObject &iKo);
-    void setup();
+    void setup(bool configured);
     void loop();
 
     void doSwitch(bool active);

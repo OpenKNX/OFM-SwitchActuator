@@ -33,19 +33,59 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
     logIndentDown();
 }
 
+void SwitchActuatorModule::setup(bool configured)
+{
+#ifdef OPENKNX_SWA_IO_TCA_WIRE
+    OPENKNX_SWA_IO_TCA_WIRE.setSDA(OPENKNX_SWA_IO_TCA_SDA);
+    OPENKNX_SWA_IO_TCA_WIRE.setSCL(OPENKNX_SWA_IO_TCA_SCL);
+    OPENKNX_SWA_IO_TCA_WIRE.begin();
+    OPENKNX_SWA_IO_TCA_WIRE.setClock(400000);
+    
+    if (tca.begin())
+    {
+        tca.pinMode8(0, 0x00);
+        tca.pinMode8(1, 0xFF);
+        tca.setPolarity8(1, 0xFF);
+
+        for (uint8_t i = 0; i < 8; i++)
+            tca.write1(i, LOW);
+
+        logDebugP("TCA9555 setup done with address %u", tca.getAddress());
+    }
+    else
+        logDebugP("TCA9555 not found at address %u", tca.getAddress());
+#endif
+
+    if (configured)
+    {
+        for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+        {
+            channel[i] = new SwitchActuatorChannel(i);
+            channel[i]->setup(configured);
+        }
+    }
+}
+
 void SwitchActuatorModule::loop()
 {
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
-}
-
-void SwitchActuatorModule::setup()
-{
-    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+    
+#ifdef OPENKNX_SWA_IO_TCA_WIRE
+    uint8_t channelIndex = 0;
+    for (uint8_t i = 0; i < 8; i++)
     {
-        channel[i] = new SwitchActuatorChannel(i);
-        channel[i]->setup();
+        channelIndex = 7 - i;
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && tca.read1(i + 8))
+        {
+            chSwitchLastTrigger[channelIndex] = delayTimerInit();
+            channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
+        }
     }
+
+    for (uint8_t i = 0; i < 8; i++)
+        tca.write1(i, channel[i]->isRelayActive());
+#endif
 }
 
 void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)

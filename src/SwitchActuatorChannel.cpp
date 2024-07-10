@@ -155,7 +155,7 @@ void SwitchActuatorChannel::loop()
     }
 }
 
-void SwitchActuatorChannel::setup()
+void SwitchActuatorChannel::setup(bool configured)
 {
     // preset PIN state before changing PIN mode
     digitalWriteFast(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
@@ -167,8 +167,11 @@ void SwitchActuatorChannel::setup()
     // set it again the standard way, just in case
     relaisOff();
 
-    if (ParamSWA_ChannelStatusCyclicTimeMS > 0)
-        statusCyclicSendTimer = delayTimerInit();
+    if (configured)
+    {
+        if (ParamSWA_ChannelStatusCyclicTimeMS > 0)
+            statusCyclicSendTimer = delayTimerInit();
+    }
 }
 
 void SwitchActuatorChannel::relaisOff()
