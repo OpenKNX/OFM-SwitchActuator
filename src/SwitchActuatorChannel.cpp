@@ -10,14 +10,15 @@ SwitchActuatorChannel::~SwitchActuatorChannel() {}
 
 void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 {
-    logDebugP("processInputKo: channel %u", _channelIndex);
-
     if (ParamSWA_ChannelActive != 1)
     {
-        logDebugP("Channel not active (%u)", ParamSWA_ChannelActive);
+        logTraceP("processInputKo: channel not active (%u)", ParamSWA_ChannelActive);
         return;
     }
-    
+
+    logDebugP("processInputKo: channel %u", _channelIndex);
+    logIndentUp();
+
     bool newActive;
     switch (SWA_KoCalcIndex(iKo.asap()))
     {
@@ -74,6 +75,8 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 
             break;
     }
+
+    logIndentDown();
 }
 
 void SwitchActuatorChannel::processSwitchInput(bool newActive)
