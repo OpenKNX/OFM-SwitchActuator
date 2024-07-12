@@ -20,7 +20,7 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
     logIndentUp();
 
     bool newActive;
-    switch (SWA_KoCalcIndex(iKo.asap()))
+    switch (iKo.asap())
     {
         case SWA_KoCentralFunction:
             if (ParamSWA_ChannelCentralFunction)
@@ -31,6 +31,10 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
                 processSwitchInput(newActive);
             }
             break;
+    }
+
+    switch (SWA_KoCalcIndex(iKo.asap()))
+    {
         case SWA_KoChannelSwitch:
             newActive = iKo.value(DPT_Switch);
             logDebugP("SWA_KoChannelSwitch: %u", newActive);
