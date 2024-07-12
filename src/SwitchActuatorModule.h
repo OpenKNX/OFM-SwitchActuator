@@ -26,6 +26,8 @@ class SwitchActuatorModule : public OpenKNX::Module
     void setup(bool configured);
     void loop();
 
+    void doSwitchChannel(uint8_t channelIndex, bool active);
+
     void writeFlash() override;
     void readFlash(const uint8_t* data, const uint16_t size) override;
     uint16_t flashSize() override;

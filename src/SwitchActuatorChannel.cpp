@@ -109,6 +109,12 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
 
 void SwitchActuatorChannel::doSwitch(bool active)
 {
+    if (ParamSWA_ChannelActive != 1)
+    {
+        logDebugP("Channel not active (%u)", ParamSWA_ChannelActive);
+        return;
+    }
+
     if (_channelIndex >= OPENKNX_SWA_CHANNEL_COUNT)
     {
         logErrorP("Channel index %u is too high for hardware channel count %u", _channelIndex, OPENKNX_SWA_CHANNEL_COUNT);
@@ -144,6 +150,26 @@ void SwitchActuatorChannel::doSwitch(bool active)
     {
         logDebugP("Set channel inverted status %u", !active);
         KoSWA_ChannelStatusInverted.value(!active, DPT_Switch);
+    }
+
+    // every third channel can be a sync channel the next two channels depend on if sync is enabled
+    if ((_channelIndex) % 3 == 0)
+    {
+        uint8_t channelUp1Index = _channelIndex + 1;
+        if (channelUp1Index < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT))
+        {
+            bool syncChannelUp1 = (bool)(knx.paramByte(SWA_ChannelSyncSwitch + SWA_ParamBlockOffset + channelUp1Index * SWA_ParamBlockSize) & SWA_ChannelSyncSwitchMask);
+            if (syncChannelUp1)
+                openknxSwitchActuatorModule.doSwitchChannel(channelUp1Index, active);
+        }
+
+        uint8_t channelUp2Index = _channelIndex + 2;
+        if (channelUp2Index < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT))
+        {
+            bool syncChannelUp2 = (bool)(knx.paramByte(SWA_ChannelSyncSwitch + SWA_ParamBlockOffset + channelUp2Index * SWA_ParamBlockSize) & SWA_ChannelSyncSwitchMask);
+            if (syncChannelUp2)
+                openknxSwitchActuatorModule.doSwitchChannel(channelUp2Index, active);
+        }
     }
 }
 

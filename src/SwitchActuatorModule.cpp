@@ -93,6 +93,11 @@ void SwitchActuatorModule::loop()
 #endif
 }
 
+void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active)
+{
+    channel[channelIndex]->doSwitch(active);
+}
+
 void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
 {
     if (size == 0)
