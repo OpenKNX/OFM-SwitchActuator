@@ -69,6 +69,7 @@
               </ParameterType>
             </ParameterTypes>
             <Parameters>
+              <Parameter Id="%AID%_P-%TT%00002" Name="CheckForOneChannel" ParameterType="%AID%_PT-CheckBox" Text="" Value="1" Access="None" />
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00001" Name="VisibleChannels" ParameterType="%AID%_PT-SWANumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%SWA_NumChannelsDefault%" SuffixText=" von %N%" />
@@ -77,6 +78,7 @@
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
+              <ParameterRef Id="%AID%_P-%TT%00002_R-%TT%0000201" RefId="%AID%_P-%TT%00002" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
@@ -94,8 +96,14 @@
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Schaltaktor Version %ModuleVersion%" UIHint="Headline" />
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
-                <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
+
+                <ParameterRefRef RefId="%AID%_P-%TT%00002_R-%TT%0000201" />
+                <choose ParamRefId="%AID%_P-%TT%00002_R-%TT%0000201">
+                  <when test="!=%N%">
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
+                  </when>
+                </choose>
               </ParameterBlock>
               <op:include href="SwitchActuatorModule.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SWA" IsInner="true" />
             </Channel>

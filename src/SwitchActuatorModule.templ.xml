@@ -90,12 +90,12 @@
               <ParameterRef Id="%AID%_P-%TT%%CC%051_R-%TT%%CC%05101" RefId="%AID%_P-%TT%%CC%051" />
             </ParameterRefs>
             <ComObjectTable>
-              <ComObject Id="%AID%_O-%TT%%CC%001" Name="Channel%C%Switch" Number="%K1%" ObjectSize="1 Bit" Text="" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%%CC%002" Name="Channel%C%Status" Number="%K2%" ObjectSize="1 Bit" Text="" FunctionText="Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%%CC%003" Name="Channel%C%StatusInverted" Number="%K3%" ObjectSize="1 Bit" Text="" FunctionText="Invertierter Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%%CC%004" Name="Channel%C%Lock" Number="%K4%" ObjectSize="1 Bit" Text="" FunctionText="Sperren" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%%CC%005" Name="Channel%C%LockStatus" Number="%K5%" ObjectSize="1 Bit" Text="" FunctionText="Sperrstatus" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%%CC%006" Name="Channel%C%Scene" Number="%K6%" ObjectSize="1 Byte" Text="" FunctionText="Szene" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-18-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%001" Name="Channel%C%Switch" Number="%K0%" ObjectSize="1 Bit" Text="" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%002" Name="Channel%C%Status" Number="%K1%" ObjectSize="1 Bit" Text="" FunctionText="Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%003" Name="Channel%C%StatusInverted" Number="%K2%" ObjectSize="1 Bit" Text="" FunctionText="Invertierter Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%004" Name="Channel%C%Lock" Number="%K3%" ObjectSize="1 Bit" Text="" FunctionText="Sperren" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%005" Name="Channel%C%LockStatus" Number="%K4%" ObjectSize="1 Bit" Text="" FunctionText="Sperrstatus" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%%CC%006" Name="Channel%C%Scene" Number="%K5%" ObjectSize="1 Byte" Text="" FunctionText="Szene" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-18-1" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="%AID%_O-%TT%%CC%001_R-%TT%%CC%00101" RefId="%AID%_O-%TT%%CC%001" Text="Kanal %Z%: {{0:}}" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
@@ -168,10 +168,15 @@
                           <ParameterRefRef RefId="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" Cell="1,4" />
                         </ParameterBlock>
 
-                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" IndentLevel="1" />
-                        <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
-                          <when test="1">
-                            <ComObjectRefRef RefId="%AID%_O-%TT%00001_R-%TT%0000101" />
+                        <ParameterRefRef RefId="%AID%_P-%TT%00002_R-%TT%0000201" />
+                        <choose ParamRefId="%AID%_P-%TT%00002_R-%TT%0000201">
+                          <when test="!=%N%">
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" IndentLevel="1" />
+                            <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
+                              <when test="1">
+                                <ComObjectRefRef RefId="%AID%_O-%TT%00001_R-%TT%0000101" />
+                              </when>
+                            </choose>
                           </when>
                         </choose>
 
