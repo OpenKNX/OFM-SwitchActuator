@@ -24,6 +24,11 @@ const std::string SwitchActuatorModule::version()
 
 void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 {
+    if (iKo.asap() != SWA_KoCentralFunction &&
+        (iKo.asap() < SWA_KoBlockOffset ||
+         iKo.asap() > SWA_KoBlockOffset + ParamSWA_VisibleChannels * SWA_KoBlockSize - 1))
+        return;
+
     logDebugP("processInputKo");
     logIndentUp();
 
@@ -70,7 +75,7 @@ void SwitchActuatorModule::loop()
 {
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
-    
+
 #ifdef OPENKNX_SWA_IO_TCA_WIRE
     uint8_t channelIndex = 0;
     for (uint8_t i = 0; i < 8; i++)
