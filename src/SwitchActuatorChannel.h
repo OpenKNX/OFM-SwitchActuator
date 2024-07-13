@@ -27,7 +27,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void setup(bool configured);
     void loop();
 
-    void doSwitch(bool active);
+    void doSwitch(bool active, bool syncSwitch = true);
     bool isRelayActive();
     void savePower();
     bool restorePower();

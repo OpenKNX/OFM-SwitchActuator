@@ -93,9 +93,9 @@ void SwitchActuatorModule::loop()
 #endif
 }
 
-void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active)
+void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch)
 {
-    channel[channelIndex]->doSwitch(active);
+    channel[channelIndex]->doSwitch(active, syncSwitch);
 }
 
 void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
@@ -129,7 +129,7 @@ void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
         if (bitIndex == 0)
             byteValue = openknx.flash.readByte();
 
-        channel[i]->doSwitch(bitRead(byteValue, bitIndex));
+        channel[i]->doSwitch(bitRead(byteValue, bitIndex), false);
     }
     
     logIndentDown();
