@@ -109,6 +109,26 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
 
 void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
 {
+    if (active && ParamSWA_ChannelTurnOnDelayTimeMS > 0)
+    {
+        turnOnDelayTimer = delayTimerInit();
+
+        // if switch on during switch off delay, we won't turn off anymore
+        turnOffDelayTimer = 0;
+    }
+    else if (!active && ParamSWA_ChannelTurnOffDelayTimeMS > 0)
+    {
+        turnOffDelayTimer = delayTimerInit();
+
+        // if switch off during switch on delay, we won't turn on anymore
+        turnOnDelayTimer = 0;
+    }
+    else
+        doSwitchInternal(active, syncSwitch);
+}
+
+void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
+{
     if (ParamSWA_ChannelActive != 1)
     {
         logDebugP("Channel not active (%u)", ParamSWA_ChannelActive);
@@ -193,6 +213,17 @@ void SwitchActuatorChannel::loop()
         relayBistableImpulsTimer = 0;
     }
 
+    if (turnOnDelayTimer > 0 && delayCheck(turnOnDelayTimer, ParamSWA_ChannelTurnOnDelayTimeMS))
+    {
+        doSwitchInternal(true);
+        turnOnDelayTimer = 0;
+    }
+    if (turnOffDelayTimer > 0 && delayCheck(turnOffDelayTimer, ParamSWA_ChannelTurnOffDelayTimeMS))
+    {
+        doSwitchInternal(false);
+        turnOffDelayTimer = 0;
+    }
+
     if (statusCyclicSendTimer > 0 && delayCheck(statusCyclicSendTimer, ParamSWA_ChannelStatusCyclicTimeMS))
     {
         KoSWA_ChannelStatus.objectWritten();
@@ -236,13 +267,13 @@ bool SwitchActuatorChannel::isRelayActive()
 void SwitchActuatorChannel::savePower()
 {
     if (ParamSWA_ChannelBehaviorPowerLoss > 0)
-        doSwitch(ParamSWA_ChannelBehaviorPowerLoss == 2);
+        doSwitchInternal(ParamSWA_ChannelBehaviorPowerLoss == 2);
 }
 
 bool SwitchActuatorChannel::restorePower()
 {
     if (ParamSWA_ChannelBehaviorPowerRegain > 0)
-        doSwitch(ParamSWA_ChannelBehaviorPowerRegain == 2);
+        doSwitchInternal(ParamSWA_ChannelBehaviorPowerRegain == 2);
     
     return true;
 }

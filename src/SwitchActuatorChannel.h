@@ -13,7 +13,10 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     bool statusDuringLock;
     uint32_t statusCyclicSendTimer = 0;
     uint32_t relayBistableImpulsTimer = 0;
+    uint32_t turnOnDelayTimer = 0;
+    uint32_t turnOffDelayTimer = 0;
 
+    void doSwitchInternal(bool active, bool syncSwitch = true);
     void processSwitchInput(bool newActive);
     void relaisOff();
 
