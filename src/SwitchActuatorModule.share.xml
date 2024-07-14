@@ -78,6 +78,7 @@
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
+              <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000102" RefId="%AID%_UP-%TT%00001" Access="None" />
               <ParameterRef Id="%AID%_P-%TT%00002_R-%TT%0000201" RefId="%AID%_P-%TT%00002" />
             </ParameterRefs>
             <ComObjectTable>
@@ -95,13 +96,16 @@
               <ParameterBlock Id="%AID%_PB-nnn" Name="Settings" Text="Allgemein" Icon="cog-outline" ShowInComObjectTree="true">
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Schaltaktor Version %ModuleVersion%" UIHint="Headline" />
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
 
                 <ParameterRefRef RefId="%AID%_P-%TT%00002_R-%TT%0000201" />
                 <choose ParamRefId="%AID%_P-%TT%00002_R-%TT%0000201">
                   <when test="!=%N%">
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
                     <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
+                  </when>
+                  <when test="%N%">
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000102" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
                   </when>
                 </choose>
               </ParameterBlock>
