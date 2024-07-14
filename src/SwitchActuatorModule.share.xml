@@ -78,7 +78,6 @@
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
-              <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000102" RefId="%AID%_UP-%TT%00001" Access="None" />
               <ParameterRef Id="%AID%_P-%TT%00002_R-%TT%0000201" RefId="%AID%_P-%TT%00002" />
             </ParameterRefs>
             <ComObjectTable>
@@ -105,7 +104,7 @@
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                   </when>
                   <when test="%N%">
-                    <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000102" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                    <Assign TargetParamRefRef="%AID%_UP-%TT%00001_R-%TT%0000101" Value="1" />
                   </when>
                 </choose>
               </ParameterBlock>
