@@ -41,8 +41,8 @@
               </Union>
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="9" BitOffset="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%017" Name="Channel%C%StairLightActive" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Treppenlicht aktivieren" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Channel%C%ScenesActive" Offset="0" BitOffset="1" ParameterType="%AID%_PT-OnOffYesNo" Text="Szenen aktivieren" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%017" Name="Channel%C%StairLightActive" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Treppenlicht aktivieren" Value="0" Access="None" />
+                <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Channel%C%ScenesActive" Offset="0" BitOffset="1" ParameterType="%AID%_PT-OnOffYesNo" Text="Szenen aktivieren" Value="0" Access="None" />
                 <!-- 5 bits free -->
                 <Parameter Id="%AID%_UP-%TT%%CC%025" Name="Channel%C%SceneLearn" Offset="0" BitOffset="7" ParameterType="%AID%_PT-OnOffYesNo" Text="Szene lernen" Value="0" />
               </Union>
@@ -226,7 +226,7 @@
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%015_R-%TT%%CC%01501" IndentLevel="1" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%016_R-%TT%%CC%01601" IndentLevel="1" />
 
-                            <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" />
+                            <!-- <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" /> -->
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%017_R-%TT%%CC%01701" IndentLevel="1" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%018_R-%TT%%CC%01801" IndentLevel="1" />
 
@@ -258,7 +258,7 @@
 
                                   <ParameterRefRef RefId="%AID%_UP-%TT%%CC%021_R-%TT%%CC%02101" IndentLevel="1" />
                                   <ParameterRefRef RefId="%AID%_UP-%TT%%CC%022_R-%TT%%CC%02201" IndentLevel="1" />
-              
+
                                   <!-- Stair light blink pattern -->
                                   <ParameterBlock Id="%AID%_PB-nnn" Name="StatusCyclic" Inline="true" Layout="Grid">
                                     <Rows>
