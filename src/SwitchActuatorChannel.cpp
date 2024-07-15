@@ -10,9 +10,9 @@ SwitchActuatorChannel::~SwitchActuatorChannel() {}
 
 void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 {
-    if (ParamSWA_ChannelActive != 1)
+    if (ParamSWA_cActive != 1)
     {
-        logTraceP("processInputKo: channel not active (%u)", ParamSWA_ChannelActive);
+        logTraceP("processInputKo: channel not active (%u)", ParamSWA_cActive);
         return;
     }
 
@@ -23,7 +23,7 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
     switch (iKo.asap())
     {
         case SWA_KoCentralFunction:
-            if (ParamSWA_ChannelCentralFunction)
+            if (ParamSWA_cCentralFunction)
             {
                 newActive = iKo.value(DPT_Switch);
                 logDebugP("SWA_KoCentralFunction: %u", newActive);
@@ -35,34 +35,34 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 
     switch (SWA_KoCalcIndex(iKo.asap()))
     {
-        case SWA_KoChannelSwitch:
+        case SWA_KocSwitch:
             newActive = iKo.value(DPT_Switch);
-            logDebugP("SWA_KoChannelSwitch: %u", newActive);
+            logDebugP("SWA_KocSwitch: %u", newActive);
 
             processSwitchInput(newActive);
             break;
-        case SWA_KoChannelLock:
+        case SWA_KocLock:
             newActive = iKo.value(DPT_Switch);
-            logDebugP("SWA_KoChannelLock: %u", newActive);
+            logDebugP("SWA_KocLock: %u", newActive);
 
-            if (newActive == (bool)KoSWA_ChannelLockStatus.value(DPT_Switch))
+            if (newActive == (bool)KoSWA_cLockStatus.value(DPT_Switch))
             {
                 logDebugP("New value equals current status");
                 break;
             }
 
-            KoSWA_ChannelLockStatus.value(newActive, DPT_Switch);
+            KoSWA_cLockStatus.value(newActive, DPT_Switch);
 
             if (newActive)
             {
-                statusDuringLock = (bool)KoSWA_ChannelStatus.value(DPT_Switch);
+                statusDuringLock = (bool)KoSWA_cStatus.value(DPT_Switch);
 
-                if (ParamSWA_ChannelBehaviorLock > 0)
-                    doSwitch(ParamSWA_ChannelBehaviorLock == 2);
+                if (ParamSWA_cBehaviorLock > 0)
+                    doSwitch(ParamSWA_cBehaviorLock == 2);
             }
             else
             {
-                switch (ParamSWA_ChannelBehaviorUnlock)
+                switch (ParamSWA_cBehaviorUnlock)
                 {
                     case 1:
                         doSwitch(false);
@@ -85,11 +85,11 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorChannel::processSwitchInput(bool newActive)
 {
-    if (KoSWA_ChannelLockStatus.value(DPT_Switch))
+    if (KoSWA_cLockStatus.value(DPT_Switch))
     {
         logDebugP("Channel is locked");
 
-        if (ParamSWA_ChannelBehaviorUnlock == 3)
+        if (ParamSWA_cBehaviorUnlock == 3)
         {
             statusDuringLock = newActive;
             logDebugP("statusDuringLock: %u", newActive);
@@ -98,7 +98,7 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
         return;
     }
 
-    if (newActive == (bool)KoSWA_ChannelStatus.value(DPT_Switch))
+    if (newActive == (bool)KoSWA_cStatus.value(DPT_Switch))
     {
         logDebugP("New value equals current status");
         return;
@@ -109,14 +109,14 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
 
 void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
 {
-    if (active && ParamSWA_ChannelTurnOnDelayTimeMS > 0)
+    if (active && ParamSWA_cTurnOnDelayTimeMS > 0)
     {
         turnOnDelayTimer = delayTimerInit();
 
         // if switch on during switch off delay, we won't turn off anymore
         turnOffDelayTimer = 0;
     }
-    else if (!active && ParamSWA_ChannelTurnOffDelayTimeMS > 0)
+    else if (!active && ParamSWA_cTurnOffDelayTimeMS > 0)
     {
         turnOffDelayTimer = delayTimerInit();
 
@@ -129,9 +129,9 @@ void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
 
 void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 {
-    if (ParamSWA_ChannelActive != 1)
+    if (ParamSWA_cActive != 1)
     {
-        logDebugP("Channel not active (%u)", ParamSWA_ChannelActive);
+        logDebugP("Channel not active (%u)", ParamSWA_cActive);
         return;
     }
 
@@ -143,13 +143,13 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 
     // if current channel should be switch in sync with other channel
     // ignore current channel switch and switch main channel instead
-    if (syncSwitch && ParamSWA_ChannelSyncSwitch == 1)
+    if (syncSwitch && ParamSWA_cSyncSwitch == 1)
     {
         if ((_channelIndex) % 3 == 1)
             openknxSwitchActuatorModule.doSwitchChannel(_channelIndex - 1, active);
         else if ((_channelIndex) % 3 == 2)
             openknxSwitchActuatorModule.doSwitchChannel(_channelIndex - 2, active);
-        
+
         return;
     }
 
@@ -157,7 +157,7 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
     relaisOff();
 
     // invert in case of operation mode is opening contact
-    bool activeSet = ParamSWA_ChannelOperationMode ? !active : active;
+    bool activeSet = ParamSWA_cOperationMode ? !active : active;
     if (activeSet)
     {
         logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
@@ -170,18 +170,18 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
     }
     relayBistableImpulsTimer = delayTimerInit();
 
-    if (ParamSWA_ChannelStatusSend)
+    if (ParamSWA_cStatusSend)
     {
         logDebugP("Set channel status %u", active);
-        KoSWA_ChannelStatus.value(active, DPT_Switch);
+        KoSWA_cStatus.value(active, DPT_Switch);
     }
     else
-        KoSWA_ChannelStatus.valueNoSend(active, DPT_Switch);
+        KoSWA_cStatus.valueNoSend(active, DPT_Switch);
 
-    if (ParamSWA_ChannelStatusInverted)
+    if (ParamSWA_cStatusInverted)
     {
         logDebugP("Set channel inverted status %u", !active);
-        KoSWA_ChannelStatusInverted.value(!active, DPT_Switch);
+        KoSWA_cStatusInverted.value(!active, DPT_Switch);
     }
 
     // every third channel can be a sync main channel the next two channels depend on if sync is enabled
@@ -190,7 +190,7 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
         uint8_t channelUp1Index = _channelIndex + 1;
         if (channelUp1Index < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT))
         {
-            bool syncChannelUp1 = (bool)(knx.paramByte(SWA_ChannelSyncSwitch + SWA_ParamBlockOffset + channelUp1Index * SWA_ParamBlockSize) & SWA_ChannelSyncSwitchMask);
+            bool syncChannelUp1 = (bool)(knx.paramByte(SWA_cSyncSwitch + SWA_ParamBlockOffset + channelUp1Index * SWA_ParamBlockSize) & SWA_cSyncSwitchMask);
             if (syncChannelUp1)
                 openknxSwitchActuatorModule.doSwitchChannel(channelUp1Index, active, false);
         }
@@ -198,7 +198,7 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
         uint8_t channelUp2Index = _channelIndex + 2;
         if (channelUp2Index < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT))
         {
-            bool syncChannelUp2 = (bool)(knx.paramByte(SWA_ChannelSyncSwitch + SWA_ParamBlockOffset + channelUp2Index * SWA_ParamBlockSize) & SWA_ChannelSyncSwitchMask);
+            bool syncChannelUp2 = (bool)(knx.paramByte(SWA_cSyncSwitch + SWA_ParamBlockOffset + channelUp2Index * SWA_ParamBlockSize) & SWA_cSyncSwitchMask);
             if (syncChannelUp2)
                 openknxSwitchActuatorModule.doSwitchChannel(channelUp2Index, active, false);
         }
@@ -213,20 +213,20 @@ void SwitchActuatorChannel::loop()
         relayBistableImpulsTimer = 0;
     }
 
-    if (turnOnDelayTimer > 0 && delayCheck(turnOnDelayTimer, ParamSWA_ChannelTurnOnDelayTimeMS))
+    if (turnOnDelayTimer > 0 && delayCheck(turnOnDelayTimer, ParamSWA_cTurnOnDelayTimeMS))
     {
         doSwitchInternal(true);
         turnOnDelayTimer = 0;
     }
-    if (turnOffDelayTimer > 0 && delayCheck(turnOffDelayTimer, ParamSWA_ChannelTurnOffDelayTimeMS))
+    if (turnOffDelayTimer > 0 && delayCheck(turnOffDelayTimer, ParamSWA_cTurnOffDelayTimeMS))
     {
         doSwitchInternal(false);
         turnOffDelayTimer = 0;
     }
 
-    if (statusCyclicSendTimer > 0 && delayCheck(statusCyclicSendTimer, ParamSWA_ChannelStatusCyclicTimeMS))
+    if (statusCyclicSendTimer > 0 && delayCheck(statusCyclicSendTimer, ParamSWA_cStatusCyclicTimeMS))
     {
-        KoSWA_ChannelStatus.objectWritten();
+        KoSWA_cStatus.objectWritten();
         statusCyclicSendTimer = delayTimerInit();
     }
 }
@@ -245,7 +245,7 @@ void SwitchActuatorChannel::setup(bool configured)
 
     if (configured)
     {
-        if (ParamSWA_ChannelStatusCyclicTimeMS > 0)
+        if (ParamSWA_cStatusCyclicTimeMS > 0)
             statusCyclicSendTimer = delayTimerInit();
     }
 }
@@ -261,20 +261,20 @@ void SwitchActuatorChannel::relaisOff()
 
 bool SwitchActuatorChannel::isRelayActive()
 {
-    return (bool)KoSWA_ChannelStatus.value(DPT_Switch);
+    return (bool)KoSWA_cStatus.value(DPT_Switch);
 }
 
 void SwitchActuatorChannel::savePower()
 {
-    if (ParamSWA_ChannelBehaviorPowerLoss > 0)
-        doSwitchInternal(ParamSWA_ChannelBehaviorPowerLoss == 2);
+    if (ParamSWA_cBehaviorPowerLoss > 0)
+        doSwitchInternal(ParamSWA_cBehaviorPowerLoss == 2);
 }
 
 bool SwitchActuatorChannel::restorePower()
 {
-    if (ParamSWA_ChannelBehaviorPowerRegain > 0)
-        doSwitchInternal(ParamSWA_ChannelBehaviorPowerRegain == 2);
-    
+    if (ParamSWA_cBehaviorPowerRegain > 0)
+        doSwitchInternal(ParamSWA_cBehaviorPowerRegain == 2);
+
     return true;
 }
 

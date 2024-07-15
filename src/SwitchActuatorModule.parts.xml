@@ -15,10 +15,10 @@
             <Parameters>
               <Union SizeInBit="16">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="%ParamOffset%" BitOffset="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+0%" Name="Channel%C%Scene%Sl%Active" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Szene aktiv" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+2%" Name="Channel%C%Scene%Sl%Behavior" Offset="0" BitOffset="1" ParameterType="%AID%_PT-SceneBehavior" Text="Szene Verhalten" Value="1" />
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+0%" Name="c%C%Scene%Sl%Active" Offset="0" BitOffset="0" ParameterType="%AID%_PT-OnOffYesNo" Text="Szene aktiv" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+2%" Name="c%C%Scene%Sl%Behavior" Offset="0" BitOffset="1" ParameterType="%AID%_PT-SceneBehavior" Text="Szene Verhalten" Value="1" />
                 <!-- 5 bit free -->
-                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+1%" Name="Channel%C%Scene%Sl%Number" Offset="1" BitOffset="0" ParameterType="%AID%_PT-ValueSceneIn" Text="Szene Nummer" Value="1" />
+                <Parameter Id="%AID%_UP-%TT%%CC%%PPP+1%" Name="c%C%Scene%Sl%Number" Offset="1" BitOffset="0" ParameterType="%AID%_PT-ValueSceneIn" Text="Szene Nummer" Value="1" />
               </Union>
             </Parameters>
             <ParameterRefs>
