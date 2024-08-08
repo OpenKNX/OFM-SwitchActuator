@@ -21,9 +21,6 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void processSwitchInput(bool newActive);
     void relaisOff();
 
-    void pinModeSA(uint16_t pin, int mode, int status=0);
-    void digitalWriteSA(uint16_t pin, int status);
-
   protected:
 
   public:

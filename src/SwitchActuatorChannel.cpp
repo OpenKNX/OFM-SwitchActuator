@@ -1,5 +1,6 @@
 #include "SwitchActuatorChannel.h"
 #include "SwitchActuatorModule.h"
+#include "GPIOModule.h"
 
 SwitchActuatorChannel::SwitchActuatorChannel(uint8_t iChannelNumber/*, SwitchActuatorModule* switchActuatorModulePtr*/)
 {
@@ -162,12 +163,12 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
     if (activeSet)
     {
         logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
-        digitalWriteSA(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
+        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
     }
     else
     {
         logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
-        digitalWriteSA(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
+        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
     }
     relayBistableImpulsTimer = delayTimerInit();
 
@@ -229,8 +230,8 @@ void SwitchActuatorChannel::loop()
 
 void SwitchActuatorChannel::setup(bool configured)
 {
-    pinModeSA(RELAY_SET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_SET_OFF);
-    pinModeSA(RELAY_RESET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_RESET_OFF);
+    openknxGPIOModule.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_SET_OFF);
+    openknxGPIOModule.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_RESET_OFF);
 
     // set it again the standard way, just in case
     relaisOff();
@@ -245,38 +246,10 @@ void SwitchActuatorChannel::setup(bool configured)
 void SwitchActuatorChannel::relaisOff()
 {
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
-    digitalWriteSA(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
+    openknxGPIOModule.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
 
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
-    digitalWriteSA(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
-}
-
-void SwitchActuatorChannel::pinModeSA(uint16_t pin, int mode, int status)
-{
-    if(!(pin & 0xff00)) // GPIO
-    {
-        // preset PIN state before changing PIN mode
-        digitalWriteFast((uint8_t)pin, status);
-        pinMode((uint8_t)pin, mode);
-    }
-    else
-    {
-        uint8_t I2Cpin = pin & 0xff;
-        uint8_t I2Cnr = pin >> 8;
-    }
-}
-
-void SwitchActuatorChannel::digitalWriteSA(uint16_t pin, int status)
-{
-    if(!(pin & 0xff00)) // GPIO
-    {
-
-        digitalWrite((uint8_t)pin, status);
-    }
-    else
-    {
-        
-    }
+    openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
 }
 
 bool SwitchActuatorChannel::isRelayActive()

@@ -1,6 +1,7 @@
 #include "SwitchActuatorModule.h"
 #include "OpenKNX.h"
 #include "ModuleVersionCheck.h"
+#include "GPIOModule.h"
 
 SwitchActuatorModule openknxSwitchActuatorModule;
 
@@ -40,25 +41,18 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorModule::setup(bool configured)
 {
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
-    OPENKNX_SWA_IO_TCA_WIRE.setSDA(OPENKNX_SWA_IO_TCA_SDA);
-    OPENKNX_SWA_IO_TCA_WIRE.setSCL(OPENKNX_SWA_IO_TCA_SCL);
-    OPENKNX_SWA_IO_TCA_WIRE.begin();
-    OPENKNX_SWA_IO_TCA_WIRE.setClock(400000);
-    
-    if (tca.begin())
+#ifdef OPENKNX_SWA_STATUS_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
-        tca.pinMode8(0, 0x00);
-        tca.pinMode8(1, 0xFF);
-        tca.setPolarity8(1, 0xFF);
-
-        for (uint8_t i = 0; i < 8; i++)
-            tca.write1(i, LOW);
-
-        logDebugP("TCA9555 setup done with address %u", tca.getAddress());
+        openknxGPIOModule.pinMode(RELAY_STATUS_PINS[i], OUTPUT, true, !OPENKNX_SWA_STATUS_ACTIVE_ON);
     }
-    else
-        logDebugP("TCA9555 not found at address %u", tca.getAddress());
+#endif
+
+#ifdef OPENKNX_SWA_SWITCH_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        openknxGPIOModule.pinMode(RELAY_SWITCH_PINS[i], INPUT);
+    }
 #endif
 
     if (configured)
@@ -76,20 +70,21 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
 
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
-    uint8_t channelIndex = 0;
-    for (uint8_t i = 0; i < 8; i++)
+#ifdef OPENKNX_SWA_SWITCH_PINS
+    for (uint8_t channelIndex = 0; channelIndex < OPENKNX_SWA_CHANNEL_COUNT; channelIndex++)
     {
-        channelIndex = 7 - i;
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && tca.read1(i + 8))
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(RELAY_SWITCH_PINS[channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
         {
             chSwitchLastTrigger[channelIndex] = delayTimerInit();
             channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
         }
     }
-
-    for (uint8_t i = 0; i < 8; i++)
-        tca.write1(i, channel[i]->isRelayActive());
+#endif
+#ifdef OPENKNX_SWA_STATUS_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], channel[i]->isRelayActive()); // ToDo OPENKNX_SWA_STATUS_ACTIVE_ON
+    }
 #endif
 }
 
