@@ -65,7 +65,7 @@ void SwitchActuatorModule::setup(bool configured)
     {
         for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         {
-            channel[i] = new SwitchActuatorChannel(i);
+            channel[i] = new SwitchActuatorChannel(i/*, this*/);
             channel[i]->setup(configured);
         }
     }

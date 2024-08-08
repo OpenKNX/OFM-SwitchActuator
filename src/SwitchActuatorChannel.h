@@ -15,15 +15,19 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     uint32_t relayBistableImpulsTimer = 0;
     uint32_t turnOnDelayTimer = 0;
     uint32_t turnOffDelayTimer = 0;
+    //SwitchActuatorModule* switchActuatorModule = nullptr;
 
     void doSwitchInternal(bool active, bool syncSwitch = true);
     void processSwitchInput(bool newActive);
     void relaisOff();
 
+    void pinModeSA(uint16_t pin, int mode, int status=0);
+    void digitalWriteSA(uint16_t pin, int status);
+
   protected:
 
   public:
-    SwitchActuatorChannel(uint8_t iChannelNumber);
+    SwitchActuatorChannel(uint8_t iChannelNumber/*, SwitchActuatorModule* switchActuatorModulePtr*/);
     ~SwitchActuatorChannel();
 
     void processInputKo(GroupObject &iKo);
