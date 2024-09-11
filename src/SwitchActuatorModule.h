@@ -15,8 +15,12 @@
 
 const uint16_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SET_PINS};
 const uint16_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_RESET_PINS};
+#ifdef OPENKNX_SWA_STATUS_PINS
 const uint16_t RELAY_STATUS_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_STATUS_PINS};
+#endif
+#ifdef OPENKNX_SWA_SWITCH_PINS
 const uint16_t RELAY_SWITCH_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SWITCH_PINS};
+#endif
 
 class SwitchActuatorModule : public OpenKNX::Module
 {
@@ -39,6 +43,9 @@ class SwitchActuatorModule : public OpenKNX::Module
 
     const std::string name() override;
     const std::string version() override;
+
+    bool processCommand(const std::string cmd, bool diagnoseKo) override;
+    void showHelp() override;
 
   private:
     SwitchActuatorChannel *channel[SWA_ChannelCount];

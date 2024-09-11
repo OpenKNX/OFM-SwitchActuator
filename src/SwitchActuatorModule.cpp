@@ -175,3 +175,57 @@ bool SwitchActuatorModule::restorePower()
     
     return success;
 }
+
+bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo)
+{
+    if (cmd.substr(0, 2) != "sa")
+        return false;
+
+    if (cmd.length() == 13 && cmd.substr(0, 10) == "sa switch ")
+    {
+        uint8_t channelidx = cmd.at(10) - 'a';
+        uint8_t value = std::stoi(cmd.substr(12, 1));
+        if(channelidx > OPENKNX_SWA_CHANNEL_COUNT - 1 || (value != 0 && value != 1))
+        {
+            logInfoP("wrong sytnax of command sa switch");
+            return true;
+        }
+
+        
+        logInfoP("Switch Channel %c to %d", channelidx+'a', value);
+        chSwitchLastTrigger[channelidx] = delayTimerInit();
+        channel[channelidx]->doSwitch(value);
+
+        return true;
+    }
+    else if (cmd.length() == 11 && cmd.substr(0, 10) == "sa toggle ")
+    {
+        uint8_t channelidx = cmd.at(10) - 'a';
+        if(channelidx > OPENKNX_SWA_CHANNEL_COUNT - 1)
+        {
+            logInfoP("wrong sytnax of command sa toggle");
+            return true;
+        }
+
+        uint8_t value = !channel[channelidx]->isRelayActive();
+        logInfoP("Switch Channel %c to %d", channelidx+'a', value);
+        chSwitchLastTrigger[channelidx] = delayTimerInit();
+        channel[channelidx]->doSwitch(value);
+
+        return true;
+    }
+
+    // Commands starting with sa are our diagnose commands
+    logInfoP("sa (SwitchActuator) command with bad args");
+    if (diagnoseKo)
+    {
+        openknx.console.writeDiagenoseKo("sa: bad args");
+    }
+    return true;
+}
+
+void SwitchActuatorModule::showHelp()
+{
+    logInfo("sa switch <channel> 0-1", "set (1) / reset (0) channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+    logInfo("sa toggle <channel>", "toggle channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+}
