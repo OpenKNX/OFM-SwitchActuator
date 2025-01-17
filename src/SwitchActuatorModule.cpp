@@ -61,13 +61,10 @@ void SwitchActuatorModule::setup(bool configured)
         logDebugP("TCA9555 not found at address %u", tca.getAddress());
 #endif
 
-    if (configured)
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
-        for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-        {
-            channel[i] = new SwitchActuatorChannel(i);
-            channel[i]->setup(configured);
-        }
+        channel[i] = new SwitchActuatorChannel(i);
+        channel[i]->setup(configured);
     }
 }
 
