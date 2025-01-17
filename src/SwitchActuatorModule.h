@@ -1,12 +1,9 @@
 #pragma once
 #include "OpenKNX.h"
+#include "GPIOModule.h"
 #include "SwitchActuatorChannel.h"
 #include "hardware.h"
 #include "knxprod.h"
-
-#ifdef OPENKNX_GPIO_WIRE
-  #include "TCA9555.h"
-#endif
 
 #define OPENKNX_SWA_FLASH_VERSION 0
 #define OPENKNX_SWA_FLASH_MAGIC_WORD 3441922009
@@ -46,10 +43,6 @@ class SwitchActuatorModule : public OpenKNX::Module
   private:
     SwitchActuatorChannel *channel[SWA_ChannelCount];
     uint32_t chSwitchLastTrigger[8] = {};
-
-#ifdef OPENKNX_GPIO_WIRE
-    TCA9555 tca = TCA9555(OPENKNX_GPIO_ADDRS, &OPENKNX_GPIO_WIRE);
-#endif
 };
 
 extern SwitchActuatorModule openknxSwitchActuatorModule;

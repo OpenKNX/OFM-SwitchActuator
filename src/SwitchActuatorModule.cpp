@@ -41,24 +41,13 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 void SwitchActuatorModule::setup(bool configured)
 {
 #ifdef OPENKNX_GPIO_WIRE
-    OPENKNX_GPIO_WIRE.setSDA(OPENKNX_GPIO_SDA);
-    OPENKNX_GPIO_WIRE.setSCL(OPENKNX_GPIO_SCL);
-    OPENKNX_GPIO_WIRE.begin();
-    OPENKNX_GPIO_WIRE.setClock(OPENKNX_GPIO_CLOCK);
-    
-    if (tca.begin())
+    for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
-        tca.pinMode8(0, 0x00);
-        tca.pinMode8(1, 0xFF);
-        tca.setPolarity8(1, 0xFF);
+        openknxGPIOModule.pinMode(0x0100 + i, OUTPUT);
+        openknxGPIOModule.digitalWrite(0x0100 + i, LOW);
 
-        for (uint8_t i = 0; i < 8; i++)
-            tca.write1(i, LOW);
-
-        logDebugP("TCA9555 setup done with address %u", tca.getAddress());
+        openknxGPIOModule.pinMode(0x0108 + i, INPUT);
     }
-    else
-        logDebugP("TCA9555 not found at address %u", tca.getAddress());
 #endif
 
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
@@ -78,7 +67,7 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < 8; i++)
     {
         channelIndex = 7 - i;
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && tca.read1(i + 8))
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(0x0108 + i))
         {
             chSwitchLastTrigger[channelIndex] = delayTimerInit();
             channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
@@ -86,7 +75,7 @@ void SwitchActuatorModule::loop()
     }
 
     for (uint8_t i = 0; i < 8; i++)
-        tca.write1(i, channel[i]->isRelayActive());
+        openknxGPIOModule.digitalWrite(0x0100 + i, channel[i]->isRelayActive());
 #endif
 }
 
