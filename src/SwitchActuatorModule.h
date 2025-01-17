@@ -4,7 +4,7 @@
 #include "hardware.h"
 #include "knxprod.h"
 
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
+#ifdef OPENKNX_GPIO_WIRE
   #include "TCA9555.h"
 #endif
 
@@ -47,8 +47,8 @@ class SwitchActuatorModule : public OpenKNX::Module
     SwitchActuatorChannel *channel[SWA_ChannelCount];
     uint32_t chSwitchLastTrigger[8] = {};
 
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
-    TCA9555 tca = TCA9555(OPENKNX_SWA_IO_TCA_ADDR, &OPENKNX_SWA_IO_TCA_WIRE);
+#ifdef OPENKNX_GPIO_WIRE
+    TCA9555 tca = TCA9555(OPENKNX_GPIO_ADDRS, &OPENKNX_GPIO_WIRE);
 #endif
 };
 

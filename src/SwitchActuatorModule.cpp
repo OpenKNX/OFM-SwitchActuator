@@ -40,11 +40,11 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorModule::setup(bool configured)
 {
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
-    OPENKNX_SWA_IO_TCA_WIRE.setSDA(OPENKNX_SWA_IO_TCA_SDA);
-    OPENKNX_SWA_IO_TCA_WIRE.setSCL(OPENKNX_SWA_IO_TCA_SCL);
-    OPENKNX_SWA_IO_TCA_WIRE.begin();
-    OPENKNX_SWA_IO_TCA_WIRE.setClock(400000);
+#ifdef OPENKNX_GPIO_WIRE
+    OPENKNX_GPIO_WIRE.setSDA(OPENKNX_GPIO_SDA);
+    OPENKNX_GPIO_WIRE.setSCL(OPENKNX_GPIO_SCL);
+    OPENKNX_GPIO_WIRE.begin();
+    OPENKNX_GPIO_WIRE.setClock(OPENKNX_GPIO_CLOCK);
     
     if (tca.begin())
     {
@@ -73,7 +73,7 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
 
-#ifdef OPENKNX_SWA_IO_TCA_WIRE
+#ifdef OPENKNX_GPIO_WIRE
     uint8_t channelIndex = 0;
     for (uint8_t i = 0; i < 8; i++)
     {
