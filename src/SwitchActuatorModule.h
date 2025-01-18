@@ -41,8 +41,8 @@ class SwitchActuatorModule : public OpenKNX::Module
     const std::string version() override;
 
   private:
-    SwitchActuatorChannel *channel[SWA_ChannelCount];
-    uint32_t chSwitchLastTrigger[8] = {};
+    SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];
+    uint32_t chSwitchLastTrigger[OPENKNX_SWA_CHANNEL_COUNT] = {};
 };
 
 extern SwitchActuatorModule openknxSwitchActuatorModule;

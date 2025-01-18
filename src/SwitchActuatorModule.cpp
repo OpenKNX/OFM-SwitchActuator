@@ -50,7 +50,8 @@ void SwitchActuatorModule::setup(bool configured)
     }
 #endif
 
-    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+    // always setup all channels to ensure defined relay state
+    for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
         channel[i] = new SwitchActuatorChannel(i);
         channel[i]->setup(configured);
@@ -64,7 +65,7 @@ void SwitchActuatorModule::loop()
 
 #ifdef OPENKNX_GPIO_WIRE
     uint8_t channelIndex = 0;
-    for (uint8_t i = 0; i < 8; i++)
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
         channelIndex = 7 - i;
         if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(0x0108 + i))
@@ -74,7 +75,7 @@ void SwitchActuatorModule::loop()
         }
     }
 
-    for (uint8_t i = 0; i < 8; i++)
+    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         openknxGPIOModule.digitalWrite(0x0100 + i, channel[i]->isRelayActive());
 #endif
 }
