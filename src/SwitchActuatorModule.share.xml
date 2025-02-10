@@ -50,15 +50,6 @@
                   <Enumeration Text="Vorheriger Zustand" Value="4" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
-              <ParameterType Id="%AID%_PT-Scene" Name="Scene">
-                <TypeRestriction Base="Value" SizeInBit="3" UIHint="DropDown">
-                  <Enumeration Text="Keine Änderung" Value="0" Id="%ENID%" />
-                  <Enumeration Text="Aus" Value="1" Id="%ENID%" />
-                  <Enumeration Text="Ein" Value="2" Id="%ENID%" />
-                  <Enumeration Text="Vorheriger Zustand, Schalten nachholen" Value="3" Id="%ENID%" />
-                  <Enumeration Text="Vorheriger Zustand" Value="4" Id="%ENID%" />
-                </TypeRestriction>
-              </ParameterType>
               <ParameterType Id="%AID%_PT-SceneBehavior" Name="SceneBehavior">
                 <TypeRestriction Base="Value" SizeInBit="2" UIHint="DropDown">
                   <Enumeration Text="Aus" Value="0" Id="%ENID%" />

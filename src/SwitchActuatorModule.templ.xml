@@ -42,9 +42,9 @@
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="9" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%017" Name="Ch%C%StairLightActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Treppenlicht aktivieren" Value="0" Access="None" />
-                <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Ch%C%ScenesActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Szenen aktivieren" Value="0" Access="None" />
+                <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Ch%C%ScenesActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Szenen aktivieren" Value="0" />
                 <!-- 5 bits free -->
-                <Parameter Id="%AID%_UP-%TT%%CC%025" Name="Ch%C%SceneLearn" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="7" Text="Szene lernen" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%025" Name="Ch%C%SceneLearn" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="7" Text="Szene lernen" Value="0" Access="None" />
               </Union>
               <Union SizeInBit="40">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="10" BitOffset="0" />
@@ -227,7 +227,7 @@
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%015_R-%TT%%CC%01501" IndentLevel="1" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%016_R-%TT%%CC%01601" IndentLevel="1" />
 
-                            <!-- <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" /> -->
+                            <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%017_R-%TT%%CC%01701" IndentLevel="1" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%018_R-%TT%%CC%01801" IndentLevel="1" />
 
@@ -293,7 +293,7 @@
 
                                   <op:usePart name="SCENE" xpath="//Dynamic/ChannelIndependentBlock/ParameterBlock[@Name='SzenePart']/*" instanceFrom="1" instanceTo="8" />
 
-                                  <ComObjectRefRef RefId="%AID%_O-%TT%%CC%005_R-%TT%%CC%00501" />
+                                  <ComObjectRefRef RefId="%AID%_O-%TT%%CC%006_R-%TT%%CC%00601" />
                                 </ParameterBlock>
                               </when>
                             </choose>

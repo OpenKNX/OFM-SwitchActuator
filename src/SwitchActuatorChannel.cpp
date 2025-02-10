@@ -8,7 +8,7 @@ SwitchActuatorChannel::SwitchActuatorChannel(uint8_t iChannelNumber)
 
 SwitchActuatorChannel::~SwitchActuatorChannel() {}
 
-void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
+void SwitchActuatorChannel::processInputKo(GroupObject &ko)
 {
     if (ParamSWA_ChActive != 1)
     {
@@ -20,12 +20,12 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
     logIndentUp();
 
     bool newActive;
-    switch (iKo.asap())
+    switch (ko.asap())
     {
         case SWA_KoCentralFunction:
             if (ParamSWA_ChCentralFunction)
             {
-                newActive = iKo.value(DPT_Switch);
+                newActive = ko.value(DPT_Switch);
                 logDebugP("SWA_KoCentralFunction: %u", newActive);
 
                 processSwitchInput(newActive);
@@ -33,50 +33,23 @@ void SwitchActuatorChannel::processInputKo(GroupObject &iKo)
             break;
     }
 
-    switch (SWA_KoCalcIndex(iKo.asap()))
+    switch (SWA_KoCalcIndex(ko.asap()))
     {
         case SWA_KoChSwitch:
-            newActive = iKo.value(DPT_Switch);
+            newActive = ko.value(DPT_Switch);
             logDebugP("SWA_KocSwitch: %u", newActive);
 
             processSwitchInput(newActive);
             break;
         case SWA_KoChLock:
-            newActive = iKo.value(DPT_Switch);
+            newActive = ko.value(DPT_Switch);
             logDebugP("SWA_KocLock: %u", newActive);
 
-            if (newActive == (bool)KoSWA_ChLockStatus.value(DPT_Switch))
-            {
-                logDebugP("New value equals current status");
-                break;
-            }
-
-            KoSWA_ChLockStatus.value(newActive, DPT_Switch);
-
-            if (newActive)
-            {
-                statusDuringLock = (bool)KoSWA_ChStatus.value(DPT_Switch);
-
-                if (ParamSWA_ChBehaviorLock > 0)
-                    doSwitch(ParamSWA_ChBehaviorLock == 2);
-            }
-            else
-            {
-                switch (ParamSWA_ChBehaviorUnlock)
-                {
-                    case 1:
-                        doSwitch(false);
-                        break;
-                    case 2:
-                        doSwitch(true);
-                        break;
-                    case 3:
-                    case 4:
-                        doSwitch(statusDuringLock);
-                        break;
-                }
-            }
-
+            processLockInput(newActive);
+            break;
+        case SWA_KoChScene:
+            if ((uint8_t)ko.value(Dpt(18, 1, 0)) == 0)
+                processScene(ko.value(Dpt(18, 1, 1)));
             break;
     }
 
@@ -105,6 +78,197 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
     }
 
     doSwitch(newActive);
+}
+
+void SwitchActuatorChannel::processLockInput(bool newActive)
+{
+    if (newActive == (bool)KoSWA_ChLockStatus.value(DPT_Switch))
+    {
+        logDebugP("New value equals current status");
+        return;
+    }
+
+    KoSWA_ChLockStatus.value(newActive, DPT_Switch);
+
+    if (newActive)
+    {
+        statusDuringLock = (bool)KoSWA_ChStatus.value(DPT_Switch);
+
+        if (ParamSWA_ChBehaviorLock > 0)
+            doSwitch(ParamSWA_ChBehaviorLock == 2);
+    }
+    else
+    {
+        switch (ParamSWA_ChBehaviorUnlock)
+        {
+            case 1:
+                doSwitch(false);
+                break;
+            case 2:
+                doSwitch(true);
+                break;
+            case 3:
+            case 4:
+                doSwitch(statusDuringLock);
+                break;
+        }
+    }
+}
+
+void SwitchActuatorChannel::processScene(uint8_t sceneNumber)
+{
+    if (ParamSWA_ChSceneAActive &&
+        ParamSWA_ChSceneANumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneABehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneBActive &&
+             ParamSWA_ChSceneBNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneBBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneCActive &&
+             ParamSWA_ChSceneCNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneCBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneDActive &&
+             ParamSWA_ChSceneDNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneDBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneEActive &&
+             ParamSWA_ChSceneENumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneEBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneFActive &&
+             ParamSWA_ChSceneFNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneFBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneGActive &&
+             ParamSWA_ChSceneGNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneGBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
+    else if (ParamSWA_ChSceneHActive &&
+             ParamSWA_ChSceneHNumber == sceneNumber)
+    {
+        switch (ParamSWA_ChSceneHBehavior)
+        {
+            case 0:
+                processSwitchInput(false);
+                break;
+            case 1:
+                processSwitchInput(true);
+                break;
+            case 2:
+                processLockInput(false);
+                break;
+            case 3:
+                processLockInput(true);
+                break;
+        }
+    }
 }
 
 void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
