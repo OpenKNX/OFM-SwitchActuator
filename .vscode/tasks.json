@@ -10,11 +10,11 @@
             "args": [
                 "baggages",
                 "--DocFileName",
-                "doc/Applikationbeschreibung-Praesenz.md",
+                "doc/Applikationbeschreibung-Schaltaktor.md",
                 "--BaggagesDir",
                 "src/Baggages/Help_de",
                 "--Prefix",
-                "PM"
+                "SWA"
             ],
             "problemMatcher": [],
             "group": "test"

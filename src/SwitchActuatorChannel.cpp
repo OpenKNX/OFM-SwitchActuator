@@ -48,8 +48,7 @@ void SwitchActuatorChannel::processInputKo(GroupObject &ko)
             processLockInput(newActive);
             break;
         case SWA_KoChScene:
-            if ((uint8_t)ko.value(Dpt(18, 1, 0)) == 0)
-                processScene(ko.value(Dpt(18, 1, 1)));
+            processScene((uint8_t)ko.value(Dpt(18, 1, 1)) + 1, ko.value(Dpt(18, 1, 0)));
             break;
     }
 
@@ -58,6 +57,8 @@ void SwitchActuatorChannel::processInputKo(GroupObject &ko)
 
 void SwitchActuatorChannel::processSwitchInput(bool newActive)
 {
+    logDebugP("processSwitchInput (newActive=%u)", newActive);
+
     if (KoSWA_ChLockStatus.value(DPT_Switch))
     {
         logDebugP("Channel is locked");
@@ -95,28 +96,44 @@ void SwitchActuatorChannel::processLockInput(bool newActive)
         statusDuringLock = (bool)KoSWA_ChStatus.value(DPT_Switch);
 
         if (ParamSWA_ChBehaviorLock > 0)
-            doSwitch(ParamSWA_ChBehaviorLock == 2);
+        {
+            bool active = ParamSWA_ChBehaviorLock == 2;
+            logDebugP("Lock active, switch relay (active=%u)", active);
+
+            doSwitch(active);
+        }
     }
     else
     {
         switch (ParamSWA_ChBehaviorUnlock)
         {
             case 1:
+                logDebugP("Lock inative, switch relay (active=0)");
                 doSwitch(false);
                 break;
             case 2:
+                logDebugP("Lock inative, switch relay (active=1)");
                 doSwitch(true);
                 break;
             case 3:
             case 4:
+                logDebugP("Lock inative, switch relay (active=%u)", statusDuringLock);
                 doSwitch(statusDuringLock);
                 break;
         }
     }
 }
 
-void SwitchActuatorChannel::processScene(uint8_t sceneNumber)
+void SwitchActuatorChannel::processScene(uint8_t sceneNumber, bool learn)
 {
+    logDebugP("processScene (sceneNumber=%u, learn=%u)", sceneNumber, learn);
+
+    if (learn)
+    {
+        logInfoP("Scene learning not supported");
+        return;
+    }
+
     if (ParamSWA_ChSceneAActive &&
         ParamSWA_ChSceneANumber == sceneNumber)
     {
@@ -273,6 +290,8 @@ void SwitchActuatorChannel::processScene(uint8_t sceneNumber)
 
 void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
 {
+    logDebugP("doSwitch (active=%u, syncSwitch=%u)", active, syncSwitch);
+
     if (active && ParamSWA_ChTurnOnDelayTimeMS > 0)
     {
         turnOnDelayTimer = delayTimerInit();
@@ -295,7 +314,7 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 {
     if (ParamSWA_ChActive != 1)
     {
-        logDebugP("Channel not active (%u)", ParamSWA_ChActive);
+        logDebugP("doSwitchInternal: Channel not active (%u)", ParamSWA_ChActive);
         return;
     }
 
@@ -374,11 +393,13 @@ void SwitchActuatorChannel::loop()
 
     if (turnOnDelayTimer > 0 && delayCheck(turnOnDelayTimer, ParamSWA_ChTurnOnDelayTimeMS))
     {
+        logDebugP("Turn relay on after turn on delay");
         doSwitchInternal(true);
         turnOnDelayTimer = 0;
     }
     if (turnOffDelayTimer > 0 && delayCheck(turnOffDelayTimer, ParamSWA_ChTurnOffDelayTimeMS))
     {
+        logDebugP("Turn relay off after turn off delay");
         doSwitchInternal(false);
         turnOffDelayTimer = 0;
     }
@@ -426,13 +447,23 @@ bool SwitchActuatorChannel::isRelayActive()
 void SwitchActuatorChannel::savePower()
 {
     if (ParamSWA_ChBehaviorPowerLoss > 0)
-        doSwitchInternal(ParamSWA_ChBehaviorPowerLoss == 2);
+    {
+        bool active = ParamSWA_ChBehaviorPowerLoss == 2;
+        logDebugP("Save power, switch relay (active=%u)", active);
+
+        doSwitchInternal(active);
+    }
 }
 
 bool SwitchActuatorChannel::restorePower()
 {
     if (ParamSWA_ChBehaviorPowerRegain > 0)
-        doSwitchInternal(ParamSWA_ChBehaviorPowerRegain == 2);
+    {
+        bool active = ParamSWA_ChBehaviorPowerRegain == 2;
+        doSwitchInternal(active);
+
+        logDebugP("Restore power, switch relay (active=%u)", active);
+    }
 
     return true;
 }

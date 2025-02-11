@@ -18,7 +18,7 @@
               <Union SizeInBit="56">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%002" Name="Ch%C%Active" ParameterType="%AID%_PT-ChannelActive" Offset="0" BitOffset="0" Text="Kanalaktivität" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%050" Name="Ch%C%SyncSwitch" ParameterType="%AID%_PT-CheckBox" Offset="0" BitOffset="2" Text="" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%050" Name="Ch%C%SyncSwitch" ParameterType="%AID%_PT-CheckBox" Offset="0" BitOffset="2" Text="Synchron schalten" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%003" Name="Ch%C%OperationMode" ParameterType="%AID%_PT-OperationMode" Offset="0" BitOffset="3" Text="Betriebsmodus" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%008" Name="Ch%C%CentralFunction" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="4" Text="Zentralfunktion" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%009" Name="Ch%C%StatusSend" ParameterType="%AID%_PT-StatusSend" Offset="0" BitOffset="5" Text="Status senden" Value="0" />
@@ -114,8 +114,8 @@
                 <when test="&gt;=%C%">
                   <ParameterBlock Id="%AID%_PB-nnn" Text="Kanal %Z%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" Icon="electric-switch" HelpContext="Empty" ShowInComObjectTree="true">
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="Kanaldefinition" UIHint="Headline" />
-                    <ParameterRefRef RefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" IndentLevel="1" />
-                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" IndentLevel="1" />
+                    <ParameterRefRef RefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" IndentLevel="1" HelpContext="%DOC%" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" IndentLevel="1" HelpContext="%DOC%" />
                     <choose ParamRefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201">
                       <when test="2">
                         <ParameterSeparator Id="%AID%_PS-nnn" Text="Wenn ein Kanal funktionslos geschaltet wird, bleiben alle Parameter und GA-Zuweisungen erhalten, ohne dass der Kanal etwas macht. Dies kann bei einer Fehlersuche sinnvoll sein." />
@@ -128,15 +128,15 @@
                             <Assign TargetParamRefRef="%AID%_P-%TT%%CC%052_R-%TT%%CC%05201" Value="0" />
                           </when>
                           <when test="2 3">
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05001" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05001" IndentLevel="1" HelpContext="%DOC%" />
                             <Assign TargetParamRefRef="%AID%_P-%TT%%CC%052_R-%TT%%CC%05201" SourceParamRefRef="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05001" />
                           </when>
                           <when test="5 6">
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05002" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05002" IndentLevel="1" HelpContext="%DOC%" />
                             <Assign TargetParamRefRef="%AID%_P-%TT%%CC%052_R-%TT%%CC%05201" SourceParamRefRef="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05002" />
                           </when>
                           <when test="8">
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05003" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05003" IndentLevel="1" HelpContext="%DOC%" />
                             <Assign TargetParamRefRef="%AID%_P-%TT%%CC%052_R-%TT%%CC%05201" SourceParamRefRef="%AID%_UP-%TT%%CC%050_R-%TT%%CC%05003" />
                           </when>
                         </choose>
@@ -144,10 +144,10 @@
                         <choose ParamRefId="%AID%_P-%TT%%CC%052_R-%TT%%CC%05201">
                           <when test="0">
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Schaltfunktionen" UIHint="Headline" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" IndentLevel="1" HelpContext="%DOC%" />
 
                             <!-- Turn On Delay pattern -->
-                            <ParameterBlock Id="%AID%_PB-nnn" Name="TurnOnDelay" Inline="true" Layout="Grid">
+                            <ParameterBlock Id="%AID%_PB-nnn" Name="TurnOnDelay" Inline="true" Layout="Grid" HelpContext="SWA-Einschaltverzoegerung">
                               <Rows>
                                 <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                               </Rows>
@@ -163,7 +163,7 @@
                             </ParameterBlock>
 
                             <!-- Turn Off Delay pattern -->
-                            <ParameterBlock Id="%AID%_PB-nnn" Name="TurnOffDelay" Inline="true" Layout="Grid">
+                            <ParameterBlock Id="%AID%_PB-nnn" Name="TurnOffDelay" Inline="true" Layout="Grid" HelpContext="SWA-Ausschaltverzoegerung">
                               <Rows>
                                 <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                               </Rows>
@@ -181,7 +181,7 @@
                             <ParameterRefRef RefId="%AID%_P-%TT%00002_R-%TT%0000201" />
                             <choose ParamRefId="%AID%_P-%TT%00002_R-%TT%0000201">
                               <when test="!=%N%">
-                                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" IndentLevel="1" />
+                                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" IndentLevel="1" HelpContext="%DOC%" />
                                 <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
                                   <when test="1">
                                     <ComObjectRefRef RefId="%AID%_O-%TT%00001_R-%TT%0000101" />
@@ -191,12 +191,12 @@
                             </choose>
 
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Status" UIHint="Headline" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901" IndentLevel="1" HelpContext="%DOC%" />
                             <choose ParamRefId="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901">
                               <when test=">0">
                                 <ComObjectRefRef RefId="%AID%_O-%TT%%CC%002_R-%TT%%CC%00201" />
 
-                                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%012_R-%TT%%CC%01201" IndentLevel="1" />
+                                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%012_R-%TT%%CC%01201" IndentLevel="1" HelpContext="%DOC%" />
                                 <choose ParamRefId="%AID%_UP-%TT%%CC%012_R-%TT%%CC%01201">
                                   <when test="1">
                                     <ComObjectRefRef RefId="%AID%_O-%TT%%CC%003_R-%TT%%CC%00301" />
@@ -204,7 +204,7 @@
                                 </choose>
 
                                 <!-- Status Cyclic pattern -->
-                                <ParameterBlock Id="%AID%_PB-nnn" Name="StatusCyclic" Inline="true" Layout="Grid">
+                                <ParameterBlock Id="%AID%_PB-nnn" Name="StatusCyclic" Inline="true" Layout="Grid" HelpContext="SWA-Status-zyklisch-senden">
                                   <Rows>
                                     <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                                   </Rows>
@@ -222,14 +222,14 @@
                             </choose>
 
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Verhalten" UIHint="Headline" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%013_R-%TT%%CC%01301" IndentLevel="1" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%014_R-%TT%%CC%01401" IndentLevel="1" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%015_R-%TT%%CC%01501" IndentLevel="1" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%016_R-%TT%%CC%01601" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%013_R-%TT%%CC%01301" IndentLevel="1" HelpContext="%DOC%" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%014_R-%TT%%CC%01401" IndentLevel="1" HelpContext="%DOC%" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%015_R-%TT%%CC%01501" IndentLevel="1" HelpContext="%DOC%" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%016_R-%TT%%CC%01601" IndentLevel="1" HelpContext="%DOC%" />
 
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%017_R-%TT%%CC%01701" IndentLevel="1" />
-                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%018_R-%TT%%CC%01801" IndentLevel="1" />
+                            <ParameterRefRef RefId="%AID%_UP-%TT%%CC%018_R-%TT%%CC%01801" IndentLevel="1" HelpContext="%DOC%" />
 
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%001_R-%TT%%CC%00101" />
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%004_R-%TT%%CC%00401" />

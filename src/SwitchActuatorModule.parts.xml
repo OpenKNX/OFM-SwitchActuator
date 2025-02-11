@@ -31,11 +31,11 @@
             <ChannelIndependentBlock>
               <ParameterBlock Id="%AID%_PB-nnn" Name="SzenePart">
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Szene %Sl%" UIHint="Headline" />
-                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01" IndentLevel="1" HelpContext="%DOC%" />
                 <choose ParamRefId="%AID%_UP-%TT%%CC%%PPP+0%_R-%TT%%CC%%PPP+0%01">
                   <when test="1">
-                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+1%_R-%TT%%CC%%PPP+1%01" IndentLevel="1" />
-                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+2%_R-%TT%%CC%%PPP+2%01" IndentLevel="1" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+1%_R-%TT%%CC%%PPP+1%01" IndentLevel="1" HelpContext="%DOC%" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%%CC%%PPP+2%_R-%TT%%CC%%PPP+2%01" IndentLevel="1" HelpContext="%DOC%" />
                   </when>
                 </choose>
               </ParameterBlock>

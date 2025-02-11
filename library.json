@@ -12,13 +12,5 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/OpenKNX/OFM-SwitchActuator"
-    },
-    "dependencies":
-    [
-        {
-            "owner": "robtillaart",
-            "name": "TCA9555",
-            "version": "^0.3.2"
-        }
-    ]
+    }
 }

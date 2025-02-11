@@ -19,7 +19,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void doSwitchInternal(bool active, bool syncSwitch = true);
     void processSwitchInput(bool newActive);
     void processLockInput(bool newActive);
-    void processScene(uint8_t sceneNumber);
+    void processScene(uint8_t sceneNumber, bool learn);
     void relaisOff();
 
   protected:

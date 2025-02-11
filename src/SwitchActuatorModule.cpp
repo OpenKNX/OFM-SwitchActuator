@@ -68,15 +68,17 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
         channelIndex = 7 - i;
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(0x0108 + i))
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(OPENKNX_SWA_GPIO_INPUT_OFFSET + i) == GPIO_INPUT_ON)
         {
+            logDebugP("Button channel %u pressed", channelIndex + 1);
+
             chSwitchLastTrigger[channelIndex] = delayTimerInit();
             channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
         }
     }
 
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-        openknxGPIOModule.digitalWrite(0x0100 + i, channel[i]->isRelayActive());
+        openknxGPIOModule.digitalWrite(OPENKNX_SWA_GPIO_OUTPUT_OFFSET + i, channel[i]->isRelayActive() ? GPIO_OUTPUT_ON : GPIO_OUTPUT_OFF);
 #endif
 }
 
