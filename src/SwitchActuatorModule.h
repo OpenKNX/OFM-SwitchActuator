@@ -10,17 +10,19 @@
 
 #define CH_SWITCH_DEBOUNCE 250
 
-#define GPIO_OUTPUT_ON  OPENKNX_SWA_GPIO_OUTPUT_ACTIVE_ON == HIGH ? HIGH : LOW
-#define GPIO_OUTPUT_OFF OPENKNX_SWA_GPIO_OUTPUT_ACTIVE_ON == HIGH ? LOW : HIGH
-#define GPIO_INPUT_ON   OPENKNX_SWA_GPIO_INPUT_ACTIVE_ON == HIGH ? HIGH : LOW
-#define GPIO_INPUT_OFF  OPENKNX_SWA_GPIO_INPUT_ACTIVE_ON == HIGH ? LOW : HIGH
-
 #ifdef OPENKNX_SWA_SET_PINS
   const uint8_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SET_PINS};
   const uint8_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_RESET_PINS};
 #else
   const uint8_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {};
   const uint8_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {};
+#endif
+
+#ifdef OPENKNX_SWA_STATUS_PINS
+const uint16_t RELAY_STATUS_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_STATUS_PINS};
+#endif
+#ifdef OPENKNX_SWA_SWITCH_PINS
+const uint16_t RELAY_SWITCH_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SWITCH_PINS};
 #endif
 
 class SwitchActuatorModule : public OpenKNX::Module
@@ -44,6 +46,9 @@ class SwitchActuatorModule : public OpenKNX::Module
 
     const std::string name() override;
     const std::string version() override;
+
+    bool processCommand(const std::string cmd, bool diagnoseKo) override;
+    void showHelp() override;
 
   private:
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];

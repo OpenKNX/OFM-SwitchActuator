@@ -40,13 +40,17 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorModule::setup(bool configured)
 {
-#ifdef OPENKNX_GPIO_WIRE
-    for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+#ifdef OPENKNX_SWA_STATUS_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
-        openknxGPIOModule.pinMode(0x0100 + i, OUTPUT);
-        openknxGPIOModule.digitalWrite(0x0100 + i, LOW);
+        openknxGPIOModule.pinMode(RELAY_STATUS_PINS[i], OUTPUT, true, !OPENKNX_SWA_STATUS_ACTIVE_ON);
+    }
+#endif
 
-        openknxGPIOModule.pinMode(0x0108 + i, INPUT);
+#ifdef OPENKNX_SWA_SWITCH_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        openknxGPIOModule.pinMode(RELAY_SWITCH_PINS[i], INPUT);
     }
 #endif
 
@@ -63,22 +67,21 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
 
-#ifdef OPENKNX_GPIO_WIRE
-    uint8_t channelIndex = 0;
-    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+#ifdef OPENKNX_SWA_SWITCH_PINS
+    for (uint8_t channelIndex = 0; channelIndex < OPENKNX_SWA_CHANNEL_COUNT; channelIndex++)
     {
-        channelIndex = 7 - i;
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(OPENKNX_SWA_GPIO_INPUT_OFFSET + i) == GPIO_INPUT_ON)
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) &&
+            openknxGPIOModule.digitalRead(RELAY_SWITCH_PINS[channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
         {
             logDebugP("Button channel %u pressed", channelIndex + 1);
-
             chSwitchLastTrigger[channelIndex] = delayTimerInit();
             channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
         }
     }
-
-    for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-        openknxGPIOModule.digitalWrite(OPENKNX_SWA_GPIO_OUTPUT_OFFSET + i, channel[i]->isRelayActive() ? GPIO_OUTPUT_ON : GPIO_OUTPUT_OFF);
+#endif
+#ifdef OPENKNX_SWA_STATUS_PINS
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], channel[i]->isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
 #endif
 }
 
@@ -168,4 +171,57 @@ bool SwitchActuatorModule::restorePower()
         success &= channel[i]->restorePower();
     
     return success;
+}
+
+bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo)
+{
+    if (cmd.substr(0, 2) != "sa")
+        return false;
+
+    if (cmd.length() == 13 && cmd.substr(0, 10) == "sa switch ")
+    {
+        uint8_t channelidx = cmd.at(10) - 'a';
+        uint8_t value = std::stoi(cmd.substr(12, 1));
+        if(channelidx > OPENKNX_SWA_CHANNEL_COUNT - 1 || (value != 0 && value != 1))
+        {
+            logInfoP("wrong sytnax of command sa switch");
+            return true;
+        }
+        
+        logInfoP("Switch Channel %c to %d", channelidx+'a', value);
+        chSwitchLastTrigger[channelidx] = delayTimerInit();
+        channel[channelidx]->doSwitch(value);
+
+        return true;
+    }
+    else if (cmd.length() == 11 && cmd.substr(0, 10) == "sa toggle ")
+    {
+        uint8_t channelidx = cmd.at(10) - 'a';
+        if(channelidx > OPENKNX_SWA_CHANNEL_COUNT - 1)
+        {
+            logInfoP("wrong sytnax of command sa toggle");
+            return true;
+        }
+
+        uint8_t value = !channel[channelidx]->isRelayActive();
+        logInfoP("Switch Channel %c to %d", channelidx+'a', value);
+        chSwitchLastTrigger[channelidx] = delayTimerInit();
+        channel[channelidx]->doSwitch(value);
+
+        return true;
+    }
+
+    // Commands starting with sa are our diagnose commands
+    logInfoP("sa (SwitchActuator) command with bad args");
+    if (diagnoseKo)
+    {
+        openknx.console.writeDiagenoseKo("sa: bad args");
+    }
+    return true;
+}
+
+void SwitchActuatorModule::showHelp()
+{
+    logInfo("sa switch <channel> 0-1", "set (1) / reset (0) channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+    logInfo("sa toggle <channel>", "toggle channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
 }
