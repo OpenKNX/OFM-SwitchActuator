@@ -345,12 +345,12 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
     if (activeSet)
     {
         logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
-        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
+        openknx.gpio.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_ON);
     }
     else
     {
         logDebugP("Write relay state activeSet=%u to GPIO %u with value %u", activeSet, RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
-        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
+        openknx.gpio.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_ON);
     }
     relayBistableImpulsTimer = delayTimerInit();
 
@@ -414,8 +414,8 @@ void SwitchActuatorChannel::loop()
 
 void SwitchActuatorChannel::setup(bool configured)
 {
-    openknxGPIOModule.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_SET_OFF);
-    openknxGPIOModule.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_RESET_OFF);
+    openknx.gpio.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_SET_OFF);
+    openknx.gpio.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, RELAY_GPIO_RESET_OFF);
 
     // set it again the standard way, just in case
     relaisOff();
@@ -430,10 +430,10 @@ void SwitchActuatorChannel::setup(bool configured)
 void SwitchActuatorChannel::relaisOff()
 {
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
-    openknxGPIOModule.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
+    openknx.gpio.digitalWrite(RELAY_SET_PINS[_channelIndex], RELAY_GPIO_SET_OFF);
 
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
-    openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
+    openknx.gpio.digitalWrite(RELAY_RESET_PINS[_channelIndex], RELAY_GPIO_RESET_OFF);
 }
 
 bool SwitchActuatorChannel::isRelayActive()
