@@ -1,6 +1,5 @@
 #include "SwitchActuatorChannel.h"
 #include "SwitchActuatorModule.h"
-#include "GPIOModule.h"
 
 SwitchActuatorChannel::SwitchActuatorChannel(uint8_t iChannelNumber/*, SwitchActuatorModule* switchActuatorModulePtr*/)
 {

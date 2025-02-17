@@ -1,6 +1,5 @@
 #pragma once
 #include "OpenKNX.h"
-#include "GPIOModule.h"
 #include "SwitchActuatorChannel.h"
 #include "hardware.h"
 #include "knxprod.h"
