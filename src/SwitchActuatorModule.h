@@ -47,8 +47,9 @@ class SwitchActuatorModule : public OpenKNX::Module
     const std::string name() override;
     const std::string version() override;
 
-    bool processCommand(const std::string cmd, bool diagnoseKo) override;
     void showHelp() override;
+    bool processCommand(const std::string cmd, bool diagnoseKo) override;
+    void runTestMode();
 
   private:
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];

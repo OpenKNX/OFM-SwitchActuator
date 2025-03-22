@@ -173,6 +173,13 @@ bool SwitchActuatorModule::restorePower()
     return success;
 }
 
+void SwitchActuatorModule::showHelp()
+{
+    logInfo("sa switch <channel> 0-1", "set (1) / reset (0) channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+    logInfo("sa toggle <channel>", "toggle channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+    logInfo("sa run test mode", "Test all channels one after the other.");
+}
+
 bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo)
 {
     if (cmd.substr(0, 2) != "sa")
@@ -210,6 +217,11 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
 
         return true;
     }
+    else if (cmd.length() == 12 && cmd.substr(0, 12) == "sa test mode")
+    {
+        runTestMode();
+        return true;
+    }
 
     // Commands starting with sa are our diagnose commands
     logInfoP("sa (SwitchActuator) command with bad args");
@@ -220,8 +232,47 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
     return true;
 }
 
-void SwitchActuatorModule::showHelp()
+void SwitchActuatorModule::runTestMode()
 {
-    logInfo("sa switch <channel> 0-1", "set (1) / reset (0) channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
-    logInfo("sa toggle <channel>", "toggle channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
+    logInfoP("Starting test mode");
+    logIndentUp();
+
+    for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        logInfoP("Switch channel %u:", i);
+        logIndentUp();
+
+        logInfoP("ON");
+        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[i], RELAY_GPIO_SET_ON);
+        delay(OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH);
+        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[i], RELAY_GPIO_SET_OFF);
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], OPENKNX_SWA_STATUS_ACTIVE_ON);
+        delay(500);
+
+        logInfoP("OFF");
+        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[i], RELAY_GPIO_RESET_ON);
+        delay(OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH);
+        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[i], RELAY_GPIO_RESET_OFF);
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], !OPENKNX_SWA_STATUS_ACTIVE_ON);
+        delay(500);
+
+        logInfoP("ON");
+        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[i], RELAY_GPIO_SET_ON);
+        delay(OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH);
+        openknxGPIOModule.digitalWrite(RELAY_SET_PINS[i], RELAY_GPIO_SET_OFF);
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], OPENKNX_SWA_STATUS_ACTIVE_ON);
+        delay(500);
+
+        logInfoP("OFF");
+        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[i], RELAY_GPIO_RESET_ON);
+        delay(OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH);
+        openknxGPIOModule.digitalWrite(RELAY_RESET_PINS[i], RELAY_GPIO_RESET_OFF);
+        openknxGPIOModule.digitalWrite(RELAY_STATUS_PINS[i], !OPENKNX_SWA_STATUS_ACTIVE_ON);
+        delay(500);
+
+        logIndentDown();
+    }
+
+    logInfoP("Testing finished.");
+    logIndentDown();
 }
