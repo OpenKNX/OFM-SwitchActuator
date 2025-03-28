@@ -63,7 +63,7 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
 
-#ifdef OPENKNX_GPIO_WIRE
+#ifdef OPENKNX_SWA_HAS_FRONT_PLATE
     uint8_t channelIndex = 0;
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
