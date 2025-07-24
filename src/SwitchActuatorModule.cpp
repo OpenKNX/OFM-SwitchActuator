@@ -90,6 +90,14 @@ void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active, bo
     channel[channelIndex]->doSwitch(active, syncSwitch);
 }
 
+bool SwitchActuatorModule::getChannelStatus(uint8_t channelIndex)
+{
+    if (channelIndex >= OPENKNX_SWA_CHANNEL_COUNT)
+        return false;
+
+    return channel[channelIndex]->isRelayActive();
+}
+
 void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
 {
     if (size == 0)
