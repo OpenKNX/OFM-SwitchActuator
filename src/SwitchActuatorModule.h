@@ -1,6 +1,5 @@
 #pragma once
 #include "OpenKNX.h"
-#include "GPIOModule.h"
 #include "SwitchActuatorChannel.h"
 #include "hardware.h"
 #include "knxprod.h"
@@ -36,6 +35,8 @@ class SwitchActuatorModule : public OpenKNX::Module
     void loop();
 
     void doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch = true);
+
+    bool getChannelStatus(uint8_t channelIndex);
 
     void writeFlash() override;
     void readFlash(const uint8_t* data, const uint16_t size) override;
