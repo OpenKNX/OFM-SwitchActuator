@@ -40,6 +40,9 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorModule::setup(bool configured)
 {
+    //openknx.gpio.init();
+    //return;
+
 #ifdef OPENKNX_SWA_STATUS_PINS
     for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
@@ -53,6 +56,22 @@ void SwitchActuatorModule::setup(bool configured)
         openknx.gpio.pinMode(RELAY_SWITCH_PINS[i], INPUT);
     }
 #endif
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    openknx.gpio.pinMode(OPENKNX_SWA_BL0942_SPI_TX_PIN, OUTPUT);
+    openknx.gpio.pinMode(OPENKNX_SWA_BL0942_SPI_RX_PIN, INPUT);
+    openknx.gpio.pinMode(OPENKNX_SWA_BL0942_SPI_SCK_PIN, OUTPUT);
+    
+    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        openknx.gpio.pinMode(RELAY_MEASURE_CS_PINS[i], OUTPUT, true, !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
+    }
+#endif
+
+    OPENKNX_SWA_BL0942_SPI.setSCK(OPENKNX_SWA_BL0942_SPI_SCK_PIN);
+    OPENKNX_SWA_BL0942_SPI.setTX(OPENKNX_SWA_BL0942_SPI_TX_PIN);
+    OPENKNX_SWA_BL0942_SPI.setRX(OPENKNX_SWA_BL0942_SPI_RX_PIN);
+    OPENKNX_SWA_BL0942_SPI.begin();
 
     // always setup all channels to ensure defined relay state
     for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
