@@ -422,9 +422,10 @@ void SwitchActuatorChannel::setup(bool configured)
     // set it again the standard way, just in case
     relaisOff();
 
-    setChannelSelector(false);
+#ifdef OPENKNX_SWA_BL0942_SPI
+    setChannelSelectorBl0942(false);
     bl0942.setChannelSelector([this](bool active){
-        this->setChannelSelector(active);
+        this->setChannelSelectorBl0942(active);
     });
     bl0942.onDataReceived([this](bl0942::SensorData &data){
         this->dataReceivedBl0942(data);
@@ -439,11 +440,35 @@ void SwitchActuatorChannel::setup(bool configured)
         bl0942.loop();
         delay(2000);
     }
+#endif
 
     if (configured)
     {
         if (ParamSWA_ChStatusCyclicTimeMS > 0)
             statusCyclicSendTimer = delayTimerInit();
+    }
+}
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data) {
+    logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", data.voltage, data.current, data.watt);
+}
+
+void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
+{
+    if (_channelIndex > 0)
+        return;
+
+    if (active)
+    {
+        logDebugP("BL0942: selecting channel");
+        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
+    }
+    else
+    {
+        logDebugP("BL0942: unselecting channel");
+        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
+        //openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
 }
 
@@ -470,28 +495,7 @@ void SwitchActuatorChannel::testBl0942()
     bl0942.setup(config);
     bl0942.print_registers();
 }
-
-void SwitchActuatorChannel::setChannelSelector(bool active)
-{
-    if (_channelIndex > 0)
-        return;
-
-    if (active)
-    {
-        logDebugP("BL0942: selecting channel");
-        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-    }
-    else
-    {
-        logDebugP("BL0942: unselecting channel");
-        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-        //openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-    }
-}
-
-void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data) {
-    logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", data.voltage, data.current, data.watt);
-}
+#endif
 
 void SwitchActuatorChannel::relaisOff()
 {
