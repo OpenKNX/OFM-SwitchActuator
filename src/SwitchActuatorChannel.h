@@ -4,11 +4,6 @@
   #include "BL0942.h"
 #endif
 
-#define RELAY_GPIO_SET_ON    OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? HIGH : LOW
-#define RELAY_GPIO_SET_OFF   OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? LOW : HIGH
-#define RELAY_GPIO_RESET_ON  OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? HIGH : LOW
-#define RELAY_GPIO_RESET_OFF OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? LOW : HIGH
-
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:
@@ -35,15 +30,17 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void testBl0942();
 #endif
 
+    uint32_t _debugTimer = 0;
+
   protected:
 
   public:
     SwitchActuatorChannel(uint8_t iChannelNumber);
     ~SwitchActuatorChannel();
 
-    void processInputKo(GroupObject &iKo);
-    void setup(bool configured);
-    void loop();
+    void processInputKo(GroupObject &iKo) override;
+    void setup(bool configured) override;
+    void loop(bool configured) override;
 
     void doSwitch(bool active, bool syncSwitch = true);
     bool isRelayActive();

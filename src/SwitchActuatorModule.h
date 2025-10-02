@@ -17,6 +17,12 @@
   const uint16_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {};
 #endif
 
+#ifdef OPENKNX_SWA_MEASURE_EN_PINS
+  const uint16_t RELAY_MEASURE_EN_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_MEASURE_EN_PINS};
+#else
+  const uint16_t RELAY_MEASURE_EN_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {};
+#endif
+
 #ifdef OPENKNX_SWA_MEASURE_CS_PINS
   const uint16_t RELAY_MEASURE_CS_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_MEASURE_CS_PINS};
 #else
@@ -36,9 +42,9 @@ class SwitchActuatorModule : public OpenKNX::Module
     SwitchActuatorModule();
     ~SwitchActuatorModule();
 
-    void processInputKo(GroupObject &iKo);
-    void setup(bool configured);
-    void loop();
+    void processInputKo(GroupObject &iKo) override;
+    void setup(bool configured) override;
+    void loop(bool configured) override;
 
     void doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch = true);
 
