@@ -383,6 +383,26 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
     }
 }
 
+void SwitchActuatorChannel::setup(bool configured)
+{
+    openknx.gpio.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_SET_ACTIVE_ON);
+    openknx.gpio.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_RESET_ACTIVE_ON);
+
+    // set it again the standard way, just in case
+    relaisOff();
+
+    if (configured)
+    {
+        if (ParamSWA_ChStatusCyclicTimeMS > 0)
+            statusCyclicSendTimer = delayTimerInit();
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+        if (ParamSWA_ChMeasureActive)
+            bl0942StartupDelay = delayTimerInit();
+#endif
+    }
+}
+
 void SwitchActuatorChannel::loop(bool configured)
 {
     if (!configured)
@@ -466,26 +486,6 @@ void SwitchActuatorChannel::loop(bool configured)
         }
     }
 #endif
-}
-
-void SwitchActuatorChannel::setup(bool configured)
-{
-    openknx.gpio.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_SET_ACTIVE_ON);
-    openknx.gpio.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_RESET_ACTIVE_ON);
-
-    // set it again the standard way, just in case
-    relaisOff();
-
-    if (configured)
-    {
-        if (ParamSWA_ChStatusCyclicTimeMS > 0)
-            statusCyclicSendTimer = delayTimerInit();
-
-#ifdef OPENKNX_SWA_BL0942_SPI
-        if (ParamSWA_ChMeasureActive)
-            bl0942StartupDelay = delayTimerInit();
-#endif
-    }
 }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
