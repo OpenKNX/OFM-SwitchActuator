@@ -215,7 +215,7 @@ void SwitchActuatorModule::showHelp()
 {
     logInfo("sa switch <channel> 0-1", "set (1) / reset (0) channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
     logInfo("sa toggle <channel>", "toggle channel a-%c", OPENKNX_SWA_CHANNEL_COUNT-1+'a');
-    logInfo("sa run test mode", "Test all channels one after the other.");
+    logInfo("sa test mode", "Test all channels one after the other.");
 }
 
 bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo)
