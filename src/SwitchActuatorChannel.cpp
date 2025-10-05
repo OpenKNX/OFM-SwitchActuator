@@ -385,15 +385,6 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 
 void SwitchActuatorChannel::loop(bool configured)
 {
-    if (_channelIndex == 0)
-    {
-        if (delayCheck(_debugTimer, 2000))
-        {
-            bl0942.loop();
-            _debugTimer = delayTimerInit();
-        }
-    }
-
     if (!configured)
         return;
 
@@ -421,6 +412,35 @@ void SwitchActuatorChannel::loop(bool configured)
         KoSWA_ChStatus.objectWritten();
         statusCyclicSendTimer = delayTimerInit();
     }
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    if (ParamSWA_ChMeasureActive)
+    {
+        if (delayCheck(bl0942UpdateTimer, OPENKNX_SWA_BL0942_LOOP_DELAY))
+        {
+            bl0942.loop();
+            bl0942UpdateTimer = delayTimerInit();
+        }
+
+        if (powerCyclicSendTimer > 0 && delayCheck(powerCyclicSendTimer, ParamSWA_ChPowerSendCyclicTimeMS))
+        {
+            KoSWA_ChPower.value(lastPower, DPT_Value_Power);
+            powerCyclicSendTimer = delayTimerInit();
+        }
+
+        if (currentCyclicSendTimer > 0 && delayCheck(currentCyclicSendTimer, ParamSWA_ChCurrentSendCyclicTimeMS))
+        {
+            KoSWA_ChCurrent.value(lastCurrent * 1000.0f, DPT_UElCurrentmA);
+            currentCyclicSendTimer = delayTimerInit();
+        }
+
+        if (voltageCyclicSendTimer > 0 && delayCheck(voltageCyclicSendTimer, ParamSWA_ChVoltageSendCyclicTimeMS))
+        {
+            KoSWA_ChVoltage.value(lastVoltage, DPT_Value_Volt);
+            voltageCyclicSendTimer = delayTimerInit();
+        }
+    }
+#endif
 }
 
 void SwitchActuatorChannel::setup(bool configured)
@@ -447,28 +467,22 @@ void SwitchActuatorChannel::setup(bool configured)
     {
         if (ParamSWA_ChStatusCyclicTimeMS > 0)
             statusCyclicSendTimer = delayTimerInit();
+        
+#ifdef OPENKNX_SWA_BL0942_SPI
+        if (ParamSWA_ChMeasureActive)
+        {
+            if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
+                powerCyclicSendTimer = delayTimerInit();
+            if (ParamSWA_ChCurrentSendCyclicTimeMS > 0)
+                currentCyclicSendTimer = delayTimerInit();
+            if (ParamSWA_ChVoltageSendCyclicTimeMS > 0)
+                voltageCyclicSendTimer = delayTimerInit();
+        }
+#endif
     }
 }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data) {
-    logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", data.voltage, data.current, data.watt);
-}
-
-void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
-{
-    if (active)
-    {
-        logDebugP("BL0942: selecting channel");
-        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-    }
-    else
-    {
-        logDebugP("BL0942: unselecting channel");
-        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-    }
-}
-
 void SwitchActuatorChannel::initBl0942()
 {
     bl0942::ModeConfig config;
@@ -491,6 +505,57 @@ void SwitchActuatorChannel::initBl0942()
 
     bl0942.setup(config);
     //bl0942.print_registers();
+}
+
+void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
+{
+    if (active)
+    {
+        logDebugP("BL0942: selecting channel");
+        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
+    }
+    else
+    {
+        logDebugP("BL0942: unselecting channel");
+        openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
+    }
+}
+
+void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
+{
+    if (_channelIndex == 0)
+    {
+        if (delayCheck(_debugTimer, 2000))
+        {
+            logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", data.voltage, data.current, data.watt);
+            _debugTimer = delayTimerInit();
+        }
+    }
+
+    float powerDifference = abs(lastPower - data.watt);
+    if (lastPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f > powerDifference ||
+        powerDifference > ParamSWA_ChPowerSendMinChangeAbsolute)
+    {
+        KoSWA_ChPower.value(data.watt, DPT_Value_Power);
+    }
+
+    float currentDifference = abs(lastCurrent - data.current);
+    if (lastCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f > currentDifference ||
+        currentDifference > ParamSWA_ChCurrentSendMinChangeAbsolute / 1000.0f)
+    {
+        KoSWA_ChCurrent.value(data.current * 1000.0f, DPT_UElCurrentmA);
+    }
+
+    float voltageDifference = abs(lastVoltage - data.voltage);
+    if (lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f > voltageDifference ||
+        voltageDifference > ParamSWA_ChVoltageSendMinChangeAbsolute)
+    {
+        KoSWA_ChVoltage.value(data.voltage, DPT_Value_Volt);
+    }
+
+    lastPower = data.watt;
+    lastCurrent = data.current;
+    lastVoltage = data.voltage;
 }
 #endif
 

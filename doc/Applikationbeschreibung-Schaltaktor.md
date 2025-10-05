@@ -139,6 +139,11 @@ Eine optional Schaltaktion bei Busspannungswiederkehr kann hier festgelegt werde
 Zusätzliche Funktionen stehen hier zur Verfügung.
 
 <!-- DOC -->
+#### **Messungen aktivieren**
+
+Festlegung, ob die Funktionen zu Messungen genutzt werden sollen.
+
+<!-- DOC -->
 #### **Szenen aktivieren**
 
 Festlegung, ob Szenenfunktionen genutzt werden sollen.

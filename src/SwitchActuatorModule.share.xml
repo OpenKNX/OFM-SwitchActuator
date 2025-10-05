@@ -58,6 +58,12 @@
                   <Enumeration Text="Entsperren" Value="3" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
+              <ParameterType Id="%AID%_PT-Percentage" Name="Percentage">
+                <TypeNumber SizeInBit="8" Type="signedInt" minInclusive="0" maxInclusive="100" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-MinimumChange" Name="MinimumChange">
+                <TypeNumber SizeInBit="16" Type="signedInt" minInclusive="0" maxInclusive="1000" />
+              </ParameterType>
             </ParameterTypes>
             <Parameters>
               <Parameter Id="%AID%_P-%TT%00002" Name="CheckForOneChannel" ParameterType="%AID%_PT-CheckBox" Text="" Value="1" Access="None" />

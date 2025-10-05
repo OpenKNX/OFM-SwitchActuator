@@ -2,6 +2,8 @@
 #include "OpenKNX.h"
 #ifdef OPENKNX_SWA_BL0942_SPI
   #include "BL0942.h"
+
+  #define OPENKNX_SWA_BL0942_LOOP_DELAY 100
 #endif
 
 class SwitchActuatorChannel : public OpenKNX::Channel
@@ -16,6 +18,14 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 
 #ifdef OPENKNX_SWA_BL0942_SPI
     bl0942::BL0942 bl0942 = bl0942::BL0942(OPENKNX_SWA_BL0942_SPI);
+
+    uint32_t bl0942UpdateTimer = 0;
+    float lastPower = 0;
+    float lastCurrent = 0;
+    float lastVoltage = 0;
+    uint32_t powerCyclicSendTimer = 0;
+    uint32_t currentCyclicSendTimer = 0;
+    uint32_t voltageCyclicSendTimer = 0;
 #endif
 
     void doSwitchInternal(bool active, bool syncSwitch = true);
