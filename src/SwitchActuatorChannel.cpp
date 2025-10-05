@@ -451,26 +451,27 @@ void SwitchActuatorChannel::setup(bool configured)
     // set it again the standard way, just in case
     relaisOff();
 
-#ifdef OPENKNX_SWA_BL0942_SPI
-    setChannelSelectorBl0942(false);
-    bl0942.setChannelSelector([this](bool active){
-        this->setChannelSelectorBl0942(active);
-    });
-    bl0942.onDataReceived([this](bl0942::SensorData &data){
-        this->dataReceivedBl0942(data);
-    });
-
-    initBl0942();
-#endif
-
     if (configured)
     {
         if (ParamSWA_ChStatusCyclicTimeMS > 0)
             statusCyclicSendTimer = delayTimerInit();
-        
+
 #ifdef OPENKNX_SWA_BL0942_SPI
         if (ParamSWA_ChMeasureActive)
         {
+            openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[_channelIndex], OUTPUT, true, OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
+            delay(10); // wait for BL0942 to start up
+
+            setChannelSelectorBl0942(false);
+            bl0942.setChannelSelector([this](bool active){
+                this->setChannelSelectorBl0942(active);
+            });
+            bl0942.onDataReceived([this](bl0942::SensorData &data){
+                this->dataReceivedBl0942(data);
+            });
+
+            initBl0942();
+
             if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
                 powerCyclicSendTimer = delayTimerInit();
             if (ParamSWA_ChCurrentSendCyclicTimeMS > 0)

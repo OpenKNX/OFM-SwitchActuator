@@ -40,9 +40,6 @@ void SwitchActuatorModule::processInputKo(GroupObject &iKo)
 
 void SwitchActuatorModule::setup(bool configured)
 {
-    //openknx.gpio.init();
-    //return;
-
 #ifdef OPENKNX_SWA_STATUS_PINS
     for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
@@ -64,9 +61,7 @@ void SwitchActuatorModule::setup(bool configured)
     
     for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
-        // all measure channels on for now
-        openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[i], OUTPUT, true, OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
-
+        openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[i], OUTPUT, true, !OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
         openknx.gpio.pinMode(RELAY_MEASURE_CS_PINS[i], OUTPUT, true, !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
 
