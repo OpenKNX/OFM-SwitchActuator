@@ -385,13 +385,13 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 
 void SwitchActuatorChannel::loop(bool configured)
 {
-    if (_channelIndex != 0)
-        return;
-
-    if (delayCheck(_debugTimer, 2000))
+    if (_channelIndex == 0)
     {
-        bl0942.loop();
-        _debugTimer = delayTimerInit();
+        if (delayCheck(_debugTimer, 2000))
+        {
+            bl0942.loop();
+            _debugTimer = delayTimerInit();
+        }
     }
 
     if (!configured)
@@ -425,9 +425,6 @@ void SwitchActuatorChannel::loop(bool configured)
 
 void SwitchActuatorChannel::setup(bool configured)
 {
-    if (_channelIndex != 0)
-        return;
-
     openknx.gpio.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_SET_ACTIVE_ON);
     openknx.gpio.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_RESET_ACTIVE_ON);
 
@@ -443,8 +440,7 @@ void SwitchActuatorChannel::setup(bool configured)
         this->dataReceivedBl0942(data);
     });
 
-    testBl0942();
-    delay(1000);
+    initBl0942();
 #endif
 
     if (configured)
@@ -470,11 +466,10 @@ void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
     {
         logDebugP("BL0942: unselecting channel");
         openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-        //openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
 }
 
-void SwitchActuatorChannel::testBl0942()
+void SwitchActuatorChannel::initBl0942()
 {
     bl0942::ModeConfig config;
 
@@ -495,7 +490,7 @@ void SwitchActuatorChannel::testBl0942()
     config.accumulation_mode = bl0942::ACCUMULATION_MODE_ABSOLUTE;  // or ALGEBRAIC
 
     bl0942.setup(config);
-    bl0942.print_registers();
+    //bl0942.print_registers();
 }
 #endif
 

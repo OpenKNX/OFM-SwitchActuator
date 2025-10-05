@@ -27,7 +27,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 #ifdef OPENKNX_SWA_BL0942_SPI
     void dataReceivedBl0942(bl0942::SensorData &data);
     void setChannelSelectorBl0942(bool active);
-    void testBl0942();
+    void initBl0942();
 #endif
 
     uint32_t _debugTimer = 0;
