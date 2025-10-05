@@ -414,7 +414,32 @@ void SwitchActuatorChannel::loop(bool configured)
     }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-    if (ParamSWA_ChMeasureActive)
+    if (bl0942StartupDelay > 0 && delayCheck(bl0942StartupDelay, OPENKNX_SWA_BL0942_INIT_DELAY))
+    {
+        openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[_channelIndex], OUTPUT, true, OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
+        delay(10); // wait for BL0942 to start up
+
+        setChannelSelectorBl0942(false);
+        bl0942.setChannelSelector([this](bool active){
+            this->setChannelSelectorBl0942(active);
+        });
+        bl0942.onDataReceived([this](bl0942::SensorData &data){
+            this->dataReceivedBl0942(data);
+        });
+
+        initBl0942();
+
+        if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
+            powerCyclicSendTimer = delayTimerInit();
+        if (ParamSWA_ChCurrentSendCyclicTimeMS > 0)
+            currentCyclicSendTimer = delayTimerInit();
+        if (ParamSWA_ChVoltageSendCyclicTimeMS > 0)
+            voltageCyclicSendTimer = delayTimerInit();
+        
+        bl0942Initialized = true;
+    }
+
+    if (bl0942Initialized)
     {
         if (delayCheck(bl0942UpdateTimer, OPENKNX_SWA_BL0942_LOOP_DELAY))
         {
@@ -458,27 +483,7 @@ void SwitchActuatorChannel::setup(bool configured)
 
 #ifdef OPENKNX_SWA_BL0942_SPI
         if (ParamSWA_ChMeasureActive)
-        {
-            openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[_channelIndex], OUTPUT, true, OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
-            delay(10); // wait for BL0942 to start up
-
-            setChannelSelectorBl0942(false);
-            bl0942.setChannelSelector([this](bool active){
-                this->setChannelSelectorBl0942(active);
-            });
-            bl0942.onDataReceived([this](bl0942::SensorData &data){
-                this->dataReceivedBl0942(data);
-            });
-
-            initBl0942();
-
-            if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
-                powerCyclicSendTimer = delayTimerInit();
-            if (ParamSWA_ChCurrentSendCyclicTimeMS > 0)
-                currentCyclicSendTimer = delayTimerInit();
-            if (ParamSWA_ChVoltageSendCyclicTimeMS > 0)
-                voltageCyclicSendTimer = delayTimerInit();
-        }
+            bl0942StartupDelay = delayTimerInit();
 #endif
     }
 }
