@@ -53,7 +53,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 
     void processInputKo(GroupObject &iKo) override;
     void setup(bool configured) override;
-    void loop(bool configured) override;
+    void loop() override;
 
     void doSwitch(bool active, bool syncSwitch = true);
     bool isRelayActive();

@@ -403,11 +403,8 @@ void SwitchActuatorChannel::setup(bool configured)
     }
 }
 
-void SwitchActuatorChannel::loop(bool configured)
+void SwitchActuatorChannel::loop()
 {
-    if (!configured)
-        return;
-
     if (relayBistableImpulsTimer > 0 && delayCheck(relayBistableImpulsTimer, OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH))
     {
         relaisOff();

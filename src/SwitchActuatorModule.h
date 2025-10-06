@@ -44,7 +44,7 @@ class SwitchActuatorModule : public OpenKNX::Module
 
     void processInputKo(GroupObject &iKo) override;
     void setup(bool configured) override;
-    void loop(bool configured) override;
+    void loop() override;
 
     void doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch = true);
 

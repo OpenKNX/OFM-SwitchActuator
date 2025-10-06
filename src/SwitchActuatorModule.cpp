@@ -79,18 +79,10 @@ void SwitchActuatorModule::setup(bool configured)
     }
 }
 
-void SwitchActuatorModule::loop(bool configured)
+void SwitchActuatorModule::loop()
 {
-    if (!configured)
-    {
-        for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
-            channel[i]->loop(configured);
-
-        return;
-    }
-
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-        channel[i]->loop(true);
+        channel[i]->loop();
 
 #ifdef OPENKNX_SWA_SWITCH_PINS
     for (uint8_t channelIndex = 0; channelIndex < OPENKNX_SWA_CHANNEL_COUNT; channelIndex++)
