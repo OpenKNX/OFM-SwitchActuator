@@ -536,21 +536,21 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
     }
 
     float powerDifference = abs(lastPower - data.watt);
-    if (lastPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f > powerDifference ||
+    if (powerDifference > lastPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f ||
         powerDifference > ParamSWA_ChPowerSendMinChangeAbsolute)
     {
         KoSWA_ChPower.value(data.watt, DPT_Value_Power);
     }
 
     float currentDifference = abs(lastCurrent - data.current);
-    if (lastCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f > currentDifference ||
+    if (currentDifference > lastCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f ||
         currentDifference > ParamSWA_ChCurrentSendMinChangeAbsolute / 1000.0f)
     {
         KoSWA_ChCurrent.value(data.current * 1000.0f, DPT_UElCurrentmA);
     }
 
     float voltageDifference = abs(lastVoltage - data.voltage);
-    if (lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f > voltageDifference ||
+    if (voltageDifference > lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f ||
         voltageDifference > ParamSWA_ChVoltageSendMinChangeAbsolute)
     {
         KoSWA_ChVoltage.value(data.voltage, DPT_Value_Volt);
