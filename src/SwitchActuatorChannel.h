@@ -17,6 +17,12 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     uint32_t turnOnDelayTimer = 0;
     uint32_t turnOffDelayTimer = 0;
 
+    void doSwitchInternal(bool active, bool syncSwitch = true);
+    void processSwitchInput(bool newActive);
+    void processLockInput(bool newActive);
+    void processScene(uint8_t sceneNumber, bool learn);
+    void relaisOff();
+
 #ifdef OPENKNX_SWA_BL0942_SPI
     bl0942::BL0942 bl0942 = bl0942::BL0942(OPENKNX_SWA_BL0942_SPI);
 
@@ -29,21 +35,13 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     uint32_t powerCyclicSendTimer = 0;
     uint32_t currentCyclicSendTimer = 0;
     uint32_t voltageCyclicSendTimer = 0;
-#endif
 
-    void doSwitchInternal(bool active, bool syncSwitch = true);
-    void processSwitchInput(bool newActive);
-    void processLockInput(bool newActive);
-    void processScene(uint8_t sceneNumber, bool learn);
-    void relaisOff();
+    uint32_t _debugTimer = 0;
 
-#ifdef OPENKNX_SWA_BL0942_SPI
     void dataReceivedBl0942(bl0942::SensorData &data);
     void setChannelSelectorBl0942(bool active);
     void initBl0942();
 #endif
-
-    uint32_t _debugTimer = 0;
 
   protected:
 
