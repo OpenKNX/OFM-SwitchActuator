@@ -58,8 +58,14 @@
                   <Enumeration Text="Entsperren" Value="3" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
-              <ParameterType Id="%AID%_PT-MinimumChange" Name="MinimumChange">
-                <TypeNumber SizeInBit="16" Type="signedInt" minInclusive="0" maxInclusive="1000" />
+              <ParameterType Id="%AID%_PT-MinimumChangePower" Name="MinimumChangePower">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="5000" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-MinimumChangeCurrent" Name="MinimumChangeCurrent">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="20000" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-MinimumChangeVoltage" Name="MinimumChangeVoltage">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="255" />
               </ParameterType>
             </ParameterTypes>
             <Parameters>

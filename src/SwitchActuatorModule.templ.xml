@@ -57,24 +57,24 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%023" Name="Ch%C%StairBlinkBase" ParameterType="%AID%_PT-DelayBase10" Offset="3" BitOffset="0" Text="Treppenlicht blinkt im Rhythmus" Value="3" />
                 <Parameter Id="%AID%_UP-%TT%%CC%024" Name="Ch%C%StairBlinkTime" ParameterType="%AID%_PT-DelayTime" Offset="3" BitOffset="2" Text="Treppenlicht blinkt im Rhythmus" Value="0" />
               </Union>
-              <Union SizeInBit="128">
+              <Union SizeInBit="120">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="15" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%054" Name="Ch%C%PowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Bei Änderung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%059" Name="Ch%C%CurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Bei Änderung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%064" Name="Ch%C%VoltageSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="2" Text="Bei Änderung senden" Value="0" />
                 <!-- 5 bits free -->
                 <Parameter Id="%AID%_UP-%TT%%CC%055" Name="Ch%C%PowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="1" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
-                <Parameter Id="%AID%_UP-%TT%%CC%056" Name="Ch%C%PowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChange" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="0" SuffixText="W" />
+                <Parameter Id="%AID%_UP-%TT%%CC%056" Name="Ch%C%PowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="W" />
                 <Parameter Id="%AID%_UP-%TT%%CC%057" Name="Ch%C%PowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="4" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%058" Name="Ch%C%PowerSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="4" BitOffset="2" Text="Zeit" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%060" Name="Ch%C%CurrentSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="6" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
-                <Parameter Id="%AID%_UP-%TT%%CC%061" Name="Ch%C%CurrentSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChange" Offset="7" BitOffset="0" Text="Mindeständerung absolut" Value="0" SuffixText="mA" />
+                <Parameter Id="%AID%_UP-%TT%%CC%061" Name="Ch%C%CurrentSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeCurrent" Offset="7" BitOffset="0" Text="Mindeständerung absolut" Value="10" SuffixText="mA" />
                 <Parameter Id="%AID%_UP-%TT%%CC%062" Name="Ch%C%CurrentSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="9" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%063" Name="Ch%C%CurrentSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="9" BitOffset="2" Text="Zeit" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%065" Name="Ch%C%VoltageSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="11" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
-                <Parameter Id="%AID%_UP-%TT%%CC%066" Name="Ch%C%VoltageSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChange" Offset="12" BitOffset="0" Text="Mindeständerung absolut" Value="0" SuffixText="V" />
-                <Parameter Id="%AID%_UP-%TT%%CC%067" Name="Ch%C%VoltageSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="14" BitOffset="0" Text="Zeitbasis" Value="0" />
-                <Parameter Id="%AID%_UP-%TT%%CC%068" Name="Ch%C%VoltageSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="14" BitOffset="2" Text="Zeit" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%066" Name="Ch%C%VoltageSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeVoltage" Offset="12" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="V" />
+                <Parameter Id="%AID%_UP-%TT%%CC%067" Name="Ch%C%VoltageSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="13" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%068" Name="Ch%C%VoltageSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="13" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
               <op:usePart name="SCENE" xpath="//Static/Parameters/*" instanceFrom="1" instanceTo="8" />
             </Parameters>
