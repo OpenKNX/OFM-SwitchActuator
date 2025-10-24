@@ -543,7 +543,7 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         uint16_t powerDifference = round(abs(lastPower - data.watt));
         if (powerDifference > 0)
         {
-            if (powerDifference >= lastPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f ||
+            if (lastPower > 0 && powerDifference >= lastPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f &&
                 powerDifference >= ParamSWA_ChPowerSendMinChangeAbsolute)
                 KoSWA_ChPower.value(data.watt, DPT_Value_Power);
             else
@@ -557,7 +557,7 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         uint16_t currentDifference = round(abs(lastCurrent - newCurrent));
         if (currentDifference > 0)
         {
-            if (currentDifference >= lastCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f ||
+            if (lastCurrent > 0 && currentDifference >= lastCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
                 currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
                 KoSWA_ChCurrent.value(newCurrent, DPT_UElCurrentmA);
             else
@@ -570,7 +570,7 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         uint16_t voltageDifference = round(abs(lastVoltage - data.voltage));
         if (voltageDifference > 0)
         {
-            if (voltageDifference >= lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f ||
+            if (lastVoltage > 0 && voltageDifference >= lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
                 voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
                 KoSWA_ChVoltage.value(data.voltage, DPT_Value_Volt);
             else
