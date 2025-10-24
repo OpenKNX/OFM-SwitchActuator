@@ -43,10 +43,10 @@ void SwitchActuatorModule::setup(bool configured)
 #ifdef OPENKNX_GPIO_WIRE
     for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
     {
-        openknxGPIOModule.pinMode(0x0100 + i, OUTPUT);
-        openknxGPIOModule.digitalWrite(0x0100 + i, LOW);
+        openknx.gpio.pinMode(0x0100 + i, OUTPUT);
+        openknx.gpio.digitalWrite(0x0100 + i, LOW);
 
-        openknxGPIOModule.pinMode(0x0108 + i, INPUT);
+        openknx.gpio.pinMode(0x0108 + i, INPUT);
     }
 #endif
 
@@ -68,7 +68,7 @@ void SwitchActuatorModule::loop()
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
         channelIndex = 7 - i;
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknxGPIOModule.digitalRead(OPENKNX_SWA_GPIO_INPUT_OFFSET + i) == GPIO_INPUT_ON)
+        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) && openknx.gpio.digitalRead(OPENKNX_SWA_GPIO_INPUT_OFFSET + i) == GPIO_INPUT_ON)
         {
             logDebugP("Button channel %u pressed", channelIndex + 1);
 
@@ -78,7 +78,7 @@ void SwitchActuatorModule::loop()
     }
 
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
-        openknxGPIOModule.digitalWrite(OPENKNX_SWA_GPIO_OUTPUT_OFFSET + i, channel[i]->isRelayActive() ? GPIO_OUTPUT_ON : GPIO_OUTPUT_OFF);
+        openknx.gpio.digitalWrite(OPENKNX_SWA_GPIO_OUTPUT_OFFSET + i, channel[i]->isRelayActive() ? GPIO_OUTPUT_ON : GPIO_OUTPUT_OFF);
 #endif
 }
 
