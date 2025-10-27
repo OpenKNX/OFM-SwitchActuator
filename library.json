@@ -16,8 +16,7 @@
     "dependencies":
     [
         {
-            "name": "BL0942",
-            "version": "file://../BL0942"
+            "santerilindfors/BL0942": "1.0.1"
         }
     ]
 }
