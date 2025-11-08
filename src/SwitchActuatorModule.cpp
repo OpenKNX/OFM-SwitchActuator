@@ -42,16 +42,12 @@ void SwitchActuatorModule::setup(bool configured)
 {
 #ifdef OPENKNX_SWA_STATUS_PINS
     for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
-    {
         openknx.gpio.pinMode(RELAY_STATUS_PINS[i], OUTPUT, true, !OPENKNX_SWA_STATUS_ACTIVE_ON);
-    }
 #endif
 
 #ifdef OPENKNX_SWA_SWITCH_PINS
     for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
-    {
         openknx.gpio.pinMode(RELAY_SWITCH_PINS[i], INPUT);
-    }
 #endif
 
 #ifdef OPENKNX_SWA_BL0942_SPI
@@ -232,9 +228,8 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
     // Commands starting with sa are our diagnose commands
     logInfoP("sa (SwitchActuator) command with bad args");
     if (diagnoseKo)
-    {
         openknx.console.writeDiagenoseKo("sa: bad args");
-    }
+
     return true;
 }
 
