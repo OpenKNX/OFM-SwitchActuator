@@ -430,6 +430,19 @@ void SwitchActuatorChannel::loop()
         statusCyclicSendTimer = delayTimerInit();
     }
 
+#ifdef OPENKNX_SWA_SWITCH_PINS
+    if (delayCheck(switchLastTrigger, SWITCH_DEBOUNCE) &&
+        openknx.gpio.digitalRead(RELAY_SWITCH_PINS[_channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
+    {
+        logDebugP("Button channel %u pressed", _channelIndex + 1);
+        switchLastTrigger = delayTimerInit();
+        doSwitch(!isRelayActive());
+    }
+#endif
+#ifdef OPENKNX_SWA_STATUS_PINS
+    openknx.gpio.digitalWrite(RELAY_STATUS_PINS[_channelIndex], isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
+#endif
+
 #ifdef OPENKNX_SWA_BL0942_SPI
     if (!bl0942Initialized &&
         bl0942StartupDelay > 0 && delayCheck(bl0942StartupDelay, OPENKNX_SWA_BL0942_INIT_DELAY))

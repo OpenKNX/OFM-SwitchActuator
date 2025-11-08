@@ -7,6 +7,8 @@
   #define OPENKNX_SWA_BL0942_LOOP_DELAY 100
 #endif
 
+#define SWITCH_DEBOUNCE 250
+
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
   private:
@@ -16,6 +18,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     uint32_t relayBistableImpulsTimer = 0;
     uint32_t turnOnDelayTimer = 0;
     uint32_t turnOffDelayTimer = 0;
+    uint32_t switchLastTrigger = 0;
 
     void doSwitchInternal(bool active, bool syncSwitch = true);
     void processSwitchInput(bool newActive);

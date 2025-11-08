@@ -7,8 +7,6 @@
 #define OPENKNX_SWA_FLASH_VERSION 0
 #define OPENKNX_SWA_FLASH_MAGIC_WORD 3441922009
 
-#define CH_SWITCH_DEBOUNCE 250
-
 #ifdef OPENKNX_SWA_SET_PINS
   const uint16_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SET_PINS};
   const uint16_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_RESET_PINS};
@@ -66,7 +64,6 @@ class SwitchActuatorModule : public OpenKNX::Module
 
   private:
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];
-    uint32_t chSwitchLastTrigger[OPENKNX_SWA_CHANNEL_COUNT] = {};
 };
 
 extern SwitchActuatorModule openknxSwitchActuatorModule;

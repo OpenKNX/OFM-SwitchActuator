@@ -83,23 +83,6 @@ void SwitchActuatorModule::loop()
 {
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
         channel[i]->loop();
-
-#ifdef OPENKNX_SWA_SWITCH_PINS
-    for (uint8_t channelIndex = 0; channelIndex < OPENKNX_SWA_CHANNEL_COUNT; channelIndex++)
-    {
-        if (delayCheck(chSwitchLastTrigger[channelIndex], CH_SWITCH_DEBOUNCE) &&
-            openknx.gpio.digitalRead(RELAY_SWITCH_PINS[channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
-        {
-            logDebugP("Button channel %u pressed", channelIndex + 1);
-            chSwitchLastTrigger[channelIndex] = delayTimerInit();
-            channel[channelIndex]->doSwitch(!channel[channelIndex]->isRelayActive());
-        }
-    }
-#endif
-#ifdef OPENKNX_SWA_STATUS_PINS
-    for(int i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
-        openknx.gpio.digitalWrite(RELAY_STATUS_PINS[i], channel[i]->isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
-#endif
 }
 
 void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch)
@@ -221,7 +204,6 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
         }
         
         logInfoP("Switch Channel %c to %d", channelidx+'a', value);
-        chSwitchLastTrigger[channelidx] = delayTimerInit();
         channel[channelidx]->doSwitch(value);
 
         return true;
@@ -237,7 +219,6 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
 
         uint8_t value = !channel[channelidx]->isRelayActive();
         logInfoP("Switch Channel %c to %d", channelidx+'a', value);
-        chSwitchLastTrigger[channelidx] = delayTimerInit();
         channel[channelidx]->doSwitch(value);
 
         return true;
