@@ -431,7 +431,8 @@ void SwitchActuatorChannel::loop()
     }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-    if (bl0942StartupDelay > 0 && delayCheck(bl0942StartupDelay, OPENKNX_SWA_BL0942_INIT_DELAY))
+    if (!bl0942Initialized &&
+        bl0942StartupDelay > 0 && delayCheck(bl0942StartupDelay, OPENKNX_SWA_BL0942_INIT_DELAY))
     {
         openknx.gpio.pinMode(RELAY_MEASURE_EN_PINS[_channelIndex], OUTPUT, true, OPENKNX_SWA_MEASURE_EN_ACTIVE_ON);
         delay(10); // wait for BL0942 to start up
@@ -517,12 +518,12 @@ void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
 {
     if (active)
     {
-        logDebugP("BL0942: selecting channel");
+        logTraceP("BL0942: selecting channel");
         openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
     else
     {
-        logDebugP("BL0942: unselecting channel");
+        logTraceP("BL0942: unselecting channel");
         openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
 }

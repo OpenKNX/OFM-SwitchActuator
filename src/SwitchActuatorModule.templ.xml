@@ -273,8 +273,8 @@
 
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Zusatzfunktionen" UIHint="Headline" />
                             <ParameterRefRef RefId="%AID%_UP-%TT%%CC%017_R-%TT%%CC%01701" IndentLevel="1" />
-                            <choose ParamRefId="%AID%_P-1000099_R-100009901"> <!-- Static 0 -->
-                              <when test="!=%SWA_Measure%">
+                            <choose ParamRefId="%AID%_UP-%TT%00003_R-%TT%0000301"> <!-- Hardware Variant -->
+                              <when test="1">
                                 <ParameterRefRef RefId="%AID%_UP-%TT%%CC%053_R-%TT%%CC%05301" IndentLevel="1" HelpContext="%DOC%" />
                               </when>
                             </choose>

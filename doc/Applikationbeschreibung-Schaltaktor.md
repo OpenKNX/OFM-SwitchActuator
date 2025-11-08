@@ -32,6 +32,15 @@ Die Funktionen des Logikmoduls sind unter [Applikationsbeschreibung-Logik](https
 <!-- DOC HelpContext="Dokumentation" -->
 Mit diesem Modul können Schaltaktorkanäle parametrisiert werden.
 
+### **Hardware**
+
+In diesem Bereich wird die verwendete Hardware ausgewählt.
+
+<!-- DOC -->
+#### **Hardware-Variante**
+
+Basierend auf dieser Auswahl werden einige Konfigurationsoptionen ein- bzw. ausgeblendet.
+
 ### **Kanaldefinition**
 
 <!-- DOC -->
