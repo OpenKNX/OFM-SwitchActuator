@@ -495,7 +495,7 @@ void SwitchActuatorChannel::loop()
         if (ParamSWA_ChVoltageSend &&
             voltageCyclicSendTimer > 0 && delayCheck(voltageCyclicSendTimer, ParamSWA_ChVoltageSendCyclicTimeMS))
         {
-            KoSWA_ChVoltage.value(lastVoltage, DPT_Value_Volt);
+            KoSWA_ChVoltage.value(lastVoltage * 1000.0f, DPT_Value_Volt);
             voltageCyclicSendTimer = delayTimerInit();
         }
     }
@@ -586,9 +586,9 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         {
             if (lastVoltage > 0 && voltageDifference >= lastVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
                 voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
-                KoSWA_ChVoltage.value(data.voltage, DPT_Value_Volt);
+                KoSWA_ChVoltage.value(data.voltage * 1000.0f, DPT_Value_Volt);
             else
-                KoSWA_ChVoltage.valueNoSend(data.voltage, DPT_Value_Volt);
+                KoSWA_ChVoltage.valueNoSend(data.voltage * 1000.0f, DPT_Value_Volt);
         }
     }
 
