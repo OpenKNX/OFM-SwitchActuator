@@ -14,6 +14,11 @@
               <ParameterType Id="%AID%_PT-SWANumChannels" Name="SWANumChannels">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
               </ParameterType>
+              <ParameterType Id="%AID%_PT-SWAHardwareVariant" Name="SWAHardwareVariant">
+                <TypeRestriction Base="Value" SizeInBit="4" UIHint="DropDown">
+                  <Enumeration Text="8-fach ohne Strommessung" Value="0" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
               <ParameterType Id="%AID%_PT-ChannelActive" Name="ChannelActive">
                 <TypeRestriction Base="Value" SizeInBit="2">
                   <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
