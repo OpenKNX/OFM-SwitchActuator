@@ -32,9 +32,9 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     bool bl0942Initialized = false;
     uint32_t bl0942StartupDelay = 0;
     uint32_t bl0942UpdateTimer = 0;
-    float lastPower = 0;
-    float lastCurrent = 0;
-    float lastVoltage = 0;
+    float lastSentPower = 0;
+    float lastSentCurrent = 0;
+    float lastSentVoltage = 0;
     uint32_t powerCyclicSendTimer = 0;
     uint32_t currentCyclicSendTimer = 0;
     uint32_t voltageCyclicSendTimer = 0;
