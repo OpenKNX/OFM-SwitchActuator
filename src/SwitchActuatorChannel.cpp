@@ -524,6 +524,7 @@ void SwitchActuatorChannel::initBl0942()
     config.accumulation_mode = bl0942::ACCUMULATION_MODE_ABSOLUTE;  // or ALGEBRAIC
 
     bl0942.setup(config);
+    bl0942.setCalibration(OPENKNX_SWA_BL0942_PREF, OPENKNX_SWA_BL0942_UREF, OPENKNX_SWA_BL0942_IREF, OPENKNX_SWA_BL0942_EREF);
     //bl0942.print_registers();
 }
 
