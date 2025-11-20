@@ -553,6 +553,12 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         }
     }
 
+    if (OPENKNX_SWA_BL0942_INVERT_DIRECTION)
+        data.watt = -data.watt;
+
+    if (data.watt < 0)
+        data.current *= -1;
+
     if (ParamSWA_ChPowerSend)
     {
         uint16_t powerDifference = round(abs(lastSentPower - data.watt));
@@ -569,7 +575,7 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         }
     }
 
-    float newCurrent = data.current * 1000.0f;
+    float newCurrent = data.current;
     if (ParamSWA_ChCurrentSend)
     {
         uint16_t currentDifference = round(abs(lastSentCurrent - newCurrent));
@@ -578,11 +584,11 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
             if (lastSentCurrent > 0 && currentDifference >= lastSentCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
                 currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
             {
-                KoSWA_ChCurrent.value(newCurrent, DPT_UElCurrentmA);
+                KoSWA_ChCurrent.value(newCurrent, DPT_Value_Electric_Current);
                 lastSentCurrent = newCurrent;
             }
             else
-                KoSWA_ChCurrent.valueNoSend(newCurrent, DPT_UElCurrentmA);
+                KoSWA_ChCurrent.valueNoSend(newCurrent, DPT_Value_Electric_Current);
         }
     }
 
@@ -594,11 +600,11 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
             if (lastSentVoltage > 0 && voltageDifference >= lastSentVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
                 voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
             {
-                KoSWA_ChVoltage.value(data.voltage * 1000.0f, DPT_Value_Volt);
+                KoSWA_ChVoltage.value(data.voltage, DPT_Value_Electric_Potential);
                 lastSentVoltage = data.voltage;
             }
             else
-                KoSWA_ChVoltage.valueNoSend(data.voltage * 1000.0f, DPT_Value_Volt);
+                KoSWA_ChVoltage.valueNoSend(data.voltage, DPT_Value_Electric_Potential);
         }
     }
 }
