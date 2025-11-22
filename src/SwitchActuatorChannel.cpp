@@ -612,6 +612,16 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         }
     }
 }
+
+float SwitchActuatorChannel::getPower()
+{
+    return lastDataReceived.watt;
+}
+
+float SwitchActuatorChannel::getCurrent()
+{
+    return lastDataReceived.current;
+}
 #endif
 
 void SwitchActuatorChannel::relaisOff()

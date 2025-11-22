@@ -61,4 +61,9 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     bool isRelayActive();
     void savePower();
     bool restorePower();
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    float getPower();
+    float getCurrent();
+#endif
 };

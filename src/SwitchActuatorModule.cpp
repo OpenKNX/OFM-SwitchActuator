@@ -77,8 +77,48 @@ void SwitchActuatorModule::setup(bool configured)
 
 void SwitchActuatorModule::loop()
 {
+    float totalCurrent = 0.0f;
+    float totalPower = 0.0f;
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
+    {
         channel[i]->loop();
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+        totalCurrent += abs(channel[i]->getCurrent());
+        totalPower += abs(channel[i]->getPower());
+#endif
+    }
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    processSendValue(KoSWA_TotalCurrent, DPT_Value_Electric_Current, ParamSWA_TotalCurrentSend, ParamSWA_TotalCurrentSendMinChangePercent, ParamSWA_TotalCurrentSendMinChangeAbsolute, ParamSWA_TotalCurrentSendCyclicTimeMS, _totalCurrentSendTimer, _lastTotalCurrentSent, totalCurrent, 1000);
+    processSendValue(KoSWA_TotalPower, DPT_Value_Power, ParamSWA_TotalPowerSend, ParamSWA_TotalPowerSendMinChangePercent, ParamSWA_TotalPowerSendMinChangeAbsolute, ParamSWA_TotalPowerSendCyclicTimeMS, _totalPowerSendTimer, _lastTotalPowerSent, totalPower);
+#endif
+}
+
+void SwitchActuatorModule::processSendValue(GroupObject& ko, Dpt dpt, bool send, uint8_t sendMinChangePercent, uint16_t sendMinChangeAbsolute, uint32_t sendCyclicTimeMS, uint32_t& cyclicSendTimer, float& lastSentValue, float currentValue, uint16_t checkMultiply)
+{
+    if (!send)
+        return;
+
+    uint16_t currentDifference = round(abs(lastSentValue - currentValue * checkMultiply));
+    if (currentDifference > 0)
+    {
+        if (lastSentValue > 0 && currentDifference >= lastSentValue * sendMinChangePercent / checkMultiply &&
+            currentDifference >= sendMinChangeAbsolute)
+        {
+            ko.value(currentValue, dpt);
+            lastSentValue = currentValue * checkMultiply;
+        }
+        else
+            ko.valueNoSend(currentValue, dpt);
+    }
+
+    if (sendCyclicTimeMS > 0 && delayCheckMillis(cyclicSendTimer, sendCyclicTimeMS))
+    {
+        ko.value(currentValue, dpt);
+        lastSentValue = currentValue * checkMultiply;
+        cyclicSendTimer = delayTimerInit();
+    }
 }
 
 void SwitchActuatorModule::doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch)

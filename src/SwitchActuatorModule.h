@@ -57,6 +57,15 @@ class SwitchActuatorModule : public OpenKNX::Module
 
   private:
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];
+
+    static void processSendValue(GroupObject &ko, Dpt dpt, bool send, uint8_t sendMinChangePercent, uint16_t sendMinChangeAbsolute, uint32_t sendCyclicTimeMS, uint32_t &cyclicSendTimer, float &lastSentValue, float currentValue, uint16_t checkMultiply = 1);
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    float _lastTotalCurrentSent = 0.0f;
+    uint32_t _totalCurrentSendTimer = 0;
+    float _lastTotalPowerSent = 0.0f;
+    uint32_t _totalPowerSendTimer = 0;
+#endif
 };
 
 extern SwitchActuatorModule openknxSwitchActuatorModule;

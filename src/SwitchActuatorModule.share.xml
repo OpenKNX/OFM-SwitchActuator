@@ -76,23 +76,53 @@
             </ParameterTypes>
             <Parameters>
               <Parameter Id="%AID%_P-%TT%00002" Name="CheckForOneChannel" ParameterType="%AID%_PT-CheckBox" Text="" Value="1" Access="None" />
+              <Parameter Id="%AID%_P-%TT%00004" Name="HardwareVariantCanMeasure" ParameterType="%AID%_PT-OnOffYesNo" Text="" Value="0" Access="None"/>
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00001" Name="VisibleChannels" ParameterType="%AID%_PT-SWANumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%SWA_NumChannelsDefault%" SuffixText=" von %N%" />
                 <Parameter Id="%AID%_UP-%TT%00003" Name="HardwareVariant" ParameterType="%AID%_PT-SWAHardwareVariant" Offset="0" BitOffset="1" Text="Hardware-Variante" Value="0" />
                 <!-- 3 bits free -->
               </Union>
+              <Union SizeInBit="88">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="1" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%00005" Name="TotalPowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Gesamtleistung senden" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00010" Name="TotalCurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Gesamtstrom senden" Value="0" />
+                <!-- 6 bits free -->
+                <Parameter Id="%AID%_UP-%TT%00006" Name="TotalPowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="1" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
+                <Parameter Id="%AID%_UP-%TT%00007" Name="TotalPowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="W" />
+                <Parameter Id="%AID%_UP-%TT%00008" Name="TotalPowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="4" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00009" Name="TotalPowerSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="4" BitOffset="2" Text="Zeit" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00011" Name="TotalCurrentSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="6" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
+                <Parameter Id="%AID%_UP-%TT%00012" Name="TotalCurrentSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeCurrent" Offset="7" BitOffset="0" Text="Mindeständerung absolut" Value="10" SuffixText="mA" />
+                <Parameter Id="%AID%_UP-%TT%00013" Name="TotalCurrentSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="9" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00014" Name="TotalCurrentSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="9" BitOffset="2" Text="Zeit" Value="0" />
+              </Union>
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
               <ParameterRef Id="%AID%_P-%TT%00002_R-%TT%0000201" RefId="%AID%_P-%TT%00002" />
               <ParameterRef Id="%AID%_UP-%TT%00003_R-%TT%0000301" RefId="%AID%_UP-%TT%00003" />
+              <ParameterRef Id="%AID%_P-%TT%00004_R-%TT%0000401" RefId="%AID%_P-%TT%00004" />
+              <ParameterRef Id="%AID%_UP-%TT%00005_R-%TT%0000501" RefId="%AID%_UP-%TT%00005" />
+              <ParameterRef Id="%AID%_UP-%TT%00006_R-%TT%0000601" RefId="%AID%_UP-%TT%00006" />
+              <ParameterRef Id="%AID%_UP-%TT%00007_R-%TT%0000701" RefId="%AID%_UP-%TT%00007" />
+              <ParameterRef Id="%AID%_UP-%TT%00008_R-%TT%0000801" RefId="%AID%_UP-%TT%00008" />
+              <ParameterRef Id="%AID%_UP-%TT%00009_R-%TT%0000901" RefId="%AID%_UP-%TT%00009" />
+              <ParameterRef Id="%AID%_UP-%TT%00010_R-%TT%0001001" RefId="%AID%_UP-%TT%00010" />
+              <ParameterRef Id="%AID%_UP-%TT%00011_R-%TT%0001101" RefId="%AID%_UP-%TT%00011" />
+              <ParameterRef Id="%AID%_UP-%TT%00012_R-%TT%0001201" RefId="%AID%_UP-%TT%00012" />
+              <ParameterRef Id="%AID%_UP-%TT%00013_R-%TT%0001301" RefId="%AID%_UP-%TT%00013" />
+              <ParameterRef Id="%AID%_UP-%TT%00014_R-%TT%0001401" RefId="%AID%_UP-%TT%00014" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%00002" Name="TotalPower" Number="1" ObjectSize="4 Bytes" Text="" FunctionText="Gesamtleistung" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-56" />
+              <ComObject Id="%AID%_O-%TT%00003" Name="TotalCurrent" Number="2" ObjectSize="4 Bytes" Text="" FunctionText="Gesamtstrom" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-19" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="%AID%_O-%TT%00001_R-%TT%0000101" RefId="%AID%_O-%TT%00001" />
+              <ComObjectRef Id="%AID%_O-%TT%00002_R-%TT%0000201" RefId="%AID%_O-%TT%00002" />
+              <ComObjectRef Id="%AID%_O-%TT%00003_R-%TT%0000301" RefId="%AID%_O-%TT%00003" />
             </ComObjectRefs>
             <Script>
               <op:include href="SwitchActuatorModule.script.js" type="script" />
@@ -108,6 +138,11 @@
                   <when test="!=%SWA_HardwareSelect%">
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="Hardware" UIHint="Headline" />
                     <ParameterRefRef RefId="%AID%_UP-%TT%00003_R-%TT%0000301" IndentLevel="1" HelpContext="%DOC%" />
+                    <choose ParamRefId="%AID%_UP-%TT%00003_R-%TT%0000301">
+                      <when test="1"> <!-- AB-SmartHouse: With Current Measure -->
+                        <Assign TargetParamRefRef="%AID%_P-%TT%00004_R-%TT%0000401" Value="1" /> <!-- HardwareVariantCanMeasure -->
+                      </when>
+                    </choose>
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                   </when>
                 </choose>
@@ -121,6 +156,55 @@
                   </when>
                   <when test="%N%">
                     <Assign TargetParamRefRef="%AID%_UP-%TT%00001_R-%TT%0000101" Value="1" />
+                  </when>
+                </choose>
+
+                <choose ParamRefId="%AID%_P-%TT%00004_R-%TT%0000401"> <!-- HardwareVariantCanMeasure -->
+                  <when test="1">
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00005_R-%TT%0000501" IndentLevel="1" />
+                    <choose ParamRefId="%AID%_UP-%TT%00005_R-%TT%0000501">
+                      <when test="1">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00006_R-%TT%0000601" IndentLevel="2" />
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00007_R-%TT%0000701" IndentLevel="2" />
+                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalPowerSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                          <Rows>
+                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                          </Rows>
+                          <Columns>
+                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                          </Columns>
+                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtleistung zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00009_R-%TT%0000901" Cell="1,3" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00008_R-%TT%0000801" Cell="1,4" />
+                        </ParameterBlock>
+                        <ComObjectRefRef RefId="%AID%_O-%TT%00002_R-%TT%0000201" />
+                      </when>
+                    </choose>
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00010_R-%TT%0001001" IndentLevel="1" />
+                    <choose ParamRefId="%AID%_UP-%TT%00010_R-%TT%0001001">
+                      <when test="1">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00011_R-%TT%0001101" IndentLevel="2" />
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00012_R-%TT%0001201" IndentLevel="2" />
+                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalCurrentSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                          <Rows>
+                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                          </Rows>
+                          <Columns>
+                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                          </Columns>
+                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtstrom zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00014_R-%TT%0001401" Cell="1,3" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00013_R-%TT%0001301" Cell="1,4" />
+                        </ParameterBlock>
+                        <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
+                      </when>
+                    </choose>
                   </when>
                 </choose>
               </ParameterBlock>
