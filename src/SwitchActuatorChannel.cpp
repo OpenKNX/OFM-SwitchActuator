@@ -481,21 +481,24 @@ void SwitchActuatorChannel::loop()
         if (ParamSWA_ChPowerSend &&
             powerCyclicSendTimer > 0 && delayCheck(powerCyclicSendTimer, ParamSWA_ChPowerSendCyclicTimeMS))
         {
-            KoSWA_ChPower.objectWritten();
+            KoSWA_ChPower.value(lastDataReceived.watt, DPT_Value_Power);
+            lastSentPower = lastDataReceived.watt;
             powerCyclicSendTimer = delayTimerInit();
         }
 
         if (ParamSWA_ChCurrentSend &&
             currentCyclicSendTimer > 0 && delayCheck(currentCyclicSendTimer, ParamSWA_ChCurrentSendCyclicTimeMS))
         {
-            KoSWA_ChCurrent.objectWritten();
+            KoSWA_ChCurrent.value(lastDataReceived.current, DPT_Value_Electric_Current);
+            lastSentCurrent = lastDataReceived.current * 1000;
             currentCyclicSendTimer = delayTimerInit();
         }
 
         if (ParamSWA_ChVoltageSend &&
             voltageCyclicSendTimer > 0 && delayCheck(voltageCyclicSendTimer, ParamSWA_ChVoltageSendCyclicTimeMS))
         {
-            KoSWA_ChVoltage.objectWritten();
+            KoSWA_ChVoltage.value(lastDataReceived.voltage, DPT_Value_Electric_Potential);
+            lastSentVoltage = lastDataReceived.voltage;
             voltageCyclicSendTimer = delayTimerInit();
         }
     }
@@ -559,6 +562,8 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
     if (data.watt < 0)
         data.current *= -1;
 
+    lastDataReceived = data;
+
     if (ParamSWA_ChPowerSend)
     {
         uint16_t powerDifference = round(abs(lastSentPower - data.watt));
@@ -575,20 +580,19 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         }
     }
 
-    float newCurrent = data.current;
     if (ParamSWA_ChCurrentSend)
     {
-        uint16_t currentDifference = round(abs(lastSentCurrent - newCurrent));
+        uint16_t currentDifference = round(abs(lastSentCurrent - data.current * 1000));
         if (currentDifference > 0)
         {
             if (lastSentCurrent > 0 && currentDifference >= lastSentCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
                 currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
             {
-                KoSWA_ChCurrent.value(newCurrent, DPT_Value_Electric_Current);
-                lastSentCurrent = newCurrent;
+                KoSWA_ChCurrent.value(data.current, DPT_Value_Electric_Current);
+                lastSentCurrent = data.current * 1000;
             }
             else
-                KoSWA_ChCurrent.valueNoSend(newCurrent, DPT_Value_Electric_Current);
+                KoSWA_ChCurrent.valueNoSend(data.current, DPT_Value_Electric_Current);
         }
     }
 

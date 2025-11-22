@@ -28,6 +28,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 
 #ifdef OPENKNX_SWA_BL0942_SPI
     bl0942::BL0942 bl0942 = bl0942::BL0942(OPENKNX_SWA_BL0942_SPI);
+    bl0942::SensorData lastDataReceived;
 
     bool bl0942Initialized = false;
     uint32_t bl0942StartupDelay = 0;
