@@ -278,6 +278,7 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
 
 void SwitchActuatorModule::runTestMode()
 {
+#if OPENKNX_SWA_CHANNEL_COUNT > 0
     logInfoP("Starting test mode");
     logIndentUp();
 
@@ -327,4 +328,5 @@ void SwitchActuatorModule::runTestMode()
 
     logInfoP("Testing finished.");
     logIndentDown();
+#endif
 }

@@ -312,6 +312,7 @@ void SwitchActuatorChannel::doSwitch(bool active, bool syncSwitch)
 
 void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
 {
+#if OPENKNX_SWA_CHANNEL_COUNT > 0
     if (ParamSWA_ChActive != 1)
     {
         logDebugP("doSwitchInternal: Channel not active (%u)", ParamSWA_ChActive);
@@ -381,10 +382,12 @@ void SwitchActuatorChannel::doSwitchInternal(bool active, bool syncSwitch)
                 openknxSwitchActuatorModule.doSwitchChannel(channelUp2Index, active, false);
         }
     }
+#endif
 }
 
 void SwitchActuatorChannel::setup(bool configured)
 {
+#if OPENKNX_SWA_CHANNEL_COUNT > 0
     openknx.gpio.pinMode(RELAY_SET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_SET_ACTIVE_ON);
     openknx.gpio.pinMode(RELAY_RESET_PINS[_channelIndex], OUTPUT, true, !OPENKNX_SWA_RESET_ACTIVE_ON);
 
@@ -401,10 +404,12 @@ void SwitchActuatorChannel::setup(bool configured)
             bl0942StartupDelay = delayTimerInit();
 #endif
     }
+#endif
 }
 
 void SwitchActuatorChannel::loop()
 {
+#if OPENKNX_SWA_CHANNEL_COUNT > 0
     if (relayBistableImpulsTimer > 0 && delayCheck(relayBistableImpulsTimer, OPENKNX_SWA_BISTABLE_IMPULSE_LENGTH))
     {
         relaisOff();
@@ -506,6 +511,7 @@ void SwitchActuatorChannel::loop()
             voltageCyclicSendTimer = delayTimerInit();
         }
     }
+#endif
 #endif
 }
 
@@ -630,11 +636,13 @@ float SwitchActuatorChannel::getCurrent()
 
 void SwitchActuatorChannel::relaisOff()
 {
+#if OPENKNX_SWA_CHANNEL_COUNT > 0
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_SET_PINS[_channelIndex], !OPENKNX_SWA_SET_ACTIVE_ON);
     openknx.gpio.digitalWrite(RELAY_SET_PINS[_channelIndex], !OPENKNX_SWA_SET_ACTIVE_ON);
 
     logDebugP("Write relay state off to GPIO %u with value %u", RELAY_RESET_PINS[_channelIndex], !OPENKNX_SWA_RESET_ACTIVE_ON);
     openknx.gpio.digitalWrite(RELAY_RESET_PINS[_channelIndex], !OPENKNX_SWA_RESET_ACTIVE_ON);
+#endif
 }
 
 bool SwitchActuatorChannel::isRelayActive()
