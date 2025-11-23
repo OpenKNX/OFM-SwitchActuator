@@ -431,16 +431,20 @@ void SwitchActuatorChannel::loop()
     }
 
 #ifdef OPENKNX_SWA_SWITCH_PINS
-    if (delayCheck(switchLastTrigger, SWITCH_DEBOUNCE) &&
-        openknx.gpio.digitalRead(RELAY_SWITCH_PINS[_channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
+    if (ParamSWA_FrontControlInput)
     {
-        logDebugP("Button channel %u pressed", _channelIndex + 1);
-        switchLastTrigger = delayTimerInit();
-        doSwitch(!isRelayActive());
+        if (delayCheck(switchLastTrigger, SWITCH_DEBOUNCE) &&
+            openknx.gpio.digitalRead(RELAY_SWITCH_PINS[_channelIndex]) == OPENKNX_SWA_SWITCH_ACTIVE_ON)
+        {
+            logDebugP("Button channel %u pressed", _channelIndex + 1);
+            switchLastTrigger = delayTimerInit();
+            doSwitch(!isRelayActive());
+        }
     }
 #endif
 #ifdef OPENKNX_SWA_STATUS_PINS
-    openknx.gpio.digitalWrite(RELAY_STATUS_PINS[_channelIndex], isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
+    if (ParamSWA_FrontControlOutput)
+        openknx.gpio.digitalWrite(RELAY_STATUS_PINS[_channelIndex], isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
 #endif
 
 #ifdef OPENKNX_SWA_BL0942_SPI

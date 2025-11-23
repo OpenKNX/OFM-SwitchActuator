@@ -3,6 +3,7 @@
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
   <op:config name="%SWA_NumChannelsDefault%" value="%N%" />
   <op:config name="%SWA_HardwareSelect%" value="0" />
+  <op:config name="%SWA_HasFrontControls%" value="0" />
 
   <ManufacturerData>
     <Manufacturer RefId="M-00FA">
@@ -13,6 +14,12 @@
               <!-- Number of channels (module specific) -->
               <ParameterType Id="%AID%_PT-SWANumChannels" Name="SWANumChannels">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-SWANumChannels8" Name="SWANumChannels8">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="8" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-SWANumChannels6" Name="SWANumChannels6">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="6" />
               </ParameterType>
               <ParameterType Id="%AID%_PT-SWAHardwareVariant" Name="SWAHardwareVariant">
                 <TypeRestriction Base="Value" SizeInBit="4" UIHint="DropDown">
@@ -77,6 +84,8 @@
             <Parameters>
               <Parameter Id="%AID%_P-%TT%00002" Name="CheckForOneChannel" ParameterType="%AID%_PT-CheckBox" Text="" Value="1" Access="None" />
               <Parameter Id="%AID%_P-%TT%00004" Name="HardwareVariantCanMeasure" ParameterType="%AID%_PT-OnOffYesNo" Text="" Value="0" Access="None"/>
+              <Parameter Id="%AID%_P-%TT%00017" Name="VisibleChannels8" ParameterType="%AID%_PT-SWANumChannels8" Text="Verfügbare Kanäle" Value="8" SuffixText=" von 8"/>
+              <Parameter Id="%AID%_P-%TT%00018" Name="VisibleChannels6" ParameterType="%AID%_PT-SWANumChannels6" Text="Verfügbare Kanäle" Value="6" SuffixText=" von 6"/>
               <Union SizeInBit="8">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00001" Name="VisibleChannels" ParameterType="%AID%_PT-SWANumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%SWA_NumChannelsDefault%" SuffixText=" von %N%" />
@@ -97,6 +106,12 @@
                 <Parameter Id="%AID%_UP-%TT%00013" Name="TotalCurrentSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="9" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00014" Name="TotalCurrentSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="9" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
+              <Union SizeInBit="16">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="16" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%00015" Name="FrontControlInput" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Frontbedienung aktivieren" Value="1" />
+                <Parameter Id="%AID%_UP-%TT%00016" Name="FrontControlOutput" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="LED-Ausgabe aktivieren" Value="1" />
+                <!-- 6 bits free -->
+              </Union>
             </Parameters>
             <ParameterRefs>
               <ParameterRef Id="%AID%_UP-%TT%00001_R-%TT%0000101" RefId="%AID%_UP-%TT%00001" />
@@ -113,6 +128,10 @@
               <ParameterRef Id="%AID%_UP-%TT%00012_R-%TT%0001201" RefId="%AID%_UP-%TT%00012" />
               <ParameterRef Id="%AID%_UP-%TT%00013_R-%TT%0001301" RefId="%AID%_UP-%TT%00013" />
               <ParameterRef Id="%AID%_UP-%TT%00014_R-%TT%0001401" RefId="%AID%_UP-%TT%00014" />
+              <ParameterRef Id="%AID%_UP-%TT%00015_R-%TT%0001501" RefId="%AID%_UP-%TT%00015" />
+              <ParameterRef Id="%AID%_UP-%TT%00016_R-%TT%0001601" RefId="%AID%_UP-%TT%00016" />
+              <ParameterRef Id="%AID%_P-%TT%00017_R-%TT%0001701" RefId="%AID%_P-%TT%00017" />
+              <ParameterRef Id="%AID%_P-%TT%00018_R-%TT%0001801" RefId="%AID%_P-%TT%00018" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
@@ -145,13 +164,28 @@
                     </choose>
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                   </when>
+                  <when test="%SWA_HardwareSelect%">
+                    <Assign TargetParamRefRef="%AID%_UP-%TT%00003_R-%TT%0000301" Value="15" />
+                  </when>
                 </choose>
 
                 <ParameterRefRef RefId="%AID%_P-%TT%00002_R-%TT%0000201" />
                 <choose ParamRefId="%AID%_P-%TT%00002_R-%TT%0000201">
                   <when test="!=%N%">
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
-                    <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                    <choose ParamRefId="%AID%_UP-%TT%00003_R-%TT%0000301">
+                      <when test="0">
+                        <ParameterRefRef RefId="%AID%_P-%TT%00017_R-%TT%0001701" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                        <Assign TargetParamRefRef="%AID%_UP-%TT%00001_R-%TT%0000101" SourceParamRefRef="%AID%_P-%TT%00017_R-%TT%0001701" />
+                      </when>
+                      <when test="1">
+                        <ParameterRefRef RefId="%AID%_P-%TT%00018_R-%TT%0001801" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                        <Assign TargetParamRefRef="%AID%_UP-%TT%00001_R-%TT%0000101" SourceParamRefRef="%AID%_P-%TT%00018_R-%TT%0001801" />
+                      </when>
+                      <when test="15">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00001_R-%TT%0000101" HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" />
+                      </when>
+                    </choose>
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                   </when>
                   <when test="%N%">
@@ -161,12 +195,13 @@
 
                 <choose ParamRefId="%AID%_P-%TT%00004_R-%TT%0000401"> <!-- HardwareVariantCanMeasure -->
                   <when test="1">
-                    <ParameterRefRef RefId="%AID%_UP-%TT%00005_R-%TT%0000501" IndentLevel="1" />
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Ausgaben" UIHint="Headline" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00005_R-%TT%0000501" IndentLevel="1" HelpContext="%DOC%" />
                     <choose ParamRefId="%AID%_UP-%TT%00005_R-%TT%0000501">
                       <when test="1">
-                        <ParameterRefRef RefId="%AID%_UP-%TT%00006_R-%TT%0000601" IndentLevel="2" />
-                        <ParameterRefRef RefId="%AID%_UP-%TT%00007_R-%TT%0000701" IndentLevel="2" />
-                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalPowerSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00006_R-%TT%0000601" IndentLevel="2" HelpContext="%DOC%" />
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00007_R-%TT%0000701" IndentLevel="2" HelpContext="%DOC%" />
+                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalPowerSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
                           <Rows>
                             <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                           </Rows>
@@ -183,12 +218,12 @@
                         <ComObjectRefRef RefId="%AID%_O-%TT%00002_R-%TT%0000201" />
                       </when>
                     </choose>
-                    <ParameterRefRef RefId="%AID%_UP-%TT%00010_R-%TT%0001001" IndentLevel="1" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00010_R-%TT%0001001" IndentLevel="1" HelpContext="%DOC%" />
                     <choose ParamRefId="%AID%_UP-%TT%00010_R-%TT%0001001">
                       <when test="1">
-                        <ParameterRefRef RefId="%AID%_UP-%TT%00011_R-%TT%0001101" IndentLevel="2" />
-                        <ParameterRefRef RefId="%AID%_UP-%TT%00012_R-%TT%0001201" IndentLevel="2" />
-                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalCurrentSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00011_R-%TT%0001101" IndentLevel="2" HelpContext="%DOC%" />
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00012_R-%TT%0001201" IndentLevel="2" HelpContext="%DOC%" />
+                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalCurrentSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
                           <Rows>
                             <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                           </Rows>
@@ -205,6 +240,15 @@
                         <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
                       </when>
                     </choose>
+                  </when>
+                </choose>
+
+                <choose ParamRefId="%AID%_P-1000099_R-100009901"> <!-- Static 0 -->
+                  <when test="!=%SWA_HasFrontControls%">
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Frontbedienung" UIHint="Headline" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00015_R-%TT%0001501" IndentLevel="1" HelpContext="%DOC%" />
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00016_R-%TT%0001601" IndentLevel="1" HelpContext="%DOC%" />
                   </when>
                 </choose>
               </ParameterBlock>

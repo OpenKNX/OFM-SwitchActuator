@@ -41,6 +41,49 @@ In diesem Bereich wird die verwendete Hardware ausgewählt.
 
 Basierend auf dieser Auswahl werden einige Konfigurationsoptionen ein- bzw. ausgeblendet.
 
+##### **Ausgaben**
+
+Verschiedene KO-Ausgaben können hier aktiviert werden.
+
+<!-- DOC -->
+###### **Gesamtleistung senden**
+
+Die absolute Gesamtleistung über alle aktiven Kanäle kann hier gesendet werden.
+
+<!-- DOC -->
+###### **Gesamtstrom senden**
+
+Die absolute Gesamtstrom über alle aktiven Kanäle kann hier gesendet werden.
+
+<!-- DOC -->
+####### **Mindeständerung relativ**
+
+Änderungen werden gesendet, wenn sowohl die relative wie auch absolute Mindeständerung erfüllt ist.
+
+<!-- DOC -->
+####### **Mindeständerung absolut**
+
+Änderungen werden gesendet, wenn sowohl die relative wie auch absolute Mindeständerung erfüllt ist.
+
+<!-- DOC -->
+####### **Messwert zyklisch senden**
+
+Der Messwert kann bei Bedarf auch zyklisch gesendet werden.
+
+##### **Frontbedienung**
+
+Zusätzliche Optionen für Hardware mit Frontbedienmöglichkeit.
+
+<!-- DOC -->
+###### **Frontbedienung aktivieren**
+
+Hier kann die Option zur Frontbedienung auf Wunsch deaktiviert werden.
+
+<!-- DOC -->
+###### **LED-Ausgabe aktivieren**
+
+Hier kann die LED-Anzeige eingeschalteter Kanäle auf Wunsch beispielsweise zum Strom sparen deaktiviert werden.
+
 ### **Kanaldefinition**
 
 <!-- DOC -->
@@ -56,7 +99,7 @@ Eine aussagekräftige Benennung erlaubt eine einfachere Orientierung innerhalb d
 <!-- DOC -->
 #### **Kanalaktivität**
 
-Hier kann man einen PM-Kanal aktivieren.
+Hier kann man einen SchaltKanal aktivieren.
 
 ##### **Inaktiv**
 
@@ -156,6 +199,15 @@ Festlegung, ob die Funktionen zu Messungen genutzt werden sollen.
 #### **Szenen aktivieren**
 
 Festlegung, ob Szenenfunktionen genutzt werden sollen.
+
+### **Messungen**
+
+Einstellungen zu Leistungs-, Strom- und Spannungsmessungen.
+
+<!-- DOC -->
+#### **Bei Änderung senden**
+
+Hier wird festgelegt, ob der Messwert bei Änderung gesendet werden soll.
 
 ### **Szene**
 

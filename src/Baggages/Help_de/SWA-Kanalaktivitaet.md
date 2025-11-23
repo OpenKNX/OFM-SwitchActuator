@@ -1,6 +1,6 @@
 ﻿### Kanalaktivität
 
-Hier kann man einen PM-Kanal aktivieren.
+Hier kann man einen SchaltKanal aktivieren.
 
 ##### Inaktiv
 

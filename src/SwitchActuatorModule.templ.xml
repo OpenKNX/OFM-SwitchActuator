@@ -333,12 +333,12 @@
                               <when test="1">
                                 <ParameterBlock Id="%AID%_PB-nnn" Text="Messungen" Icon="meter-electric-outline">
                                   <ParameterSeparator Id="%AID%_PS-nnn" Text="Wirkleistung" UIHint="Headline" />
-                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%054_R-%TT%%CC%05401" IndentLevel="1" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%054_R-%TT%%CC%05401" IndentLevel="1" HelpContext="%DOC%" />
                                   <choose ParamRefId="%AID%_UP-%TT%%CC%054_R-%TT%%CC%05401">
                                     <when test="1">
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%055_R-%TT%%CC%05501" IndentLevel="2" />
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%056_R-%TT%%CC%05601" IndentLevel="2" />
-                                      <ParameterBlock Id="%AID%_PB-nnn" Name="PowerSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%055_R-%TT%%CC%05501" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%056_R-%TT%%CC%05601" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="PowerSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
                                         <Rows>
                                           <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                                         </Rows>
@@ -357,12 +357,12 @@
                                   </choose>
 
                                   <ParameterSeparator Id="%AID%_PS-nnn" Text="Strom" UIHint="Headline" />
-                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%059_R-%TT%%CC%05901" IndentLevel="1" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%059_R-%TT%%CC%05901" IndentLevel="1" HelpContext="%DOC%" />
                                   <choose ParamRefId="%AID%_UP-%TT%%CC%059_R-%TT%%CC%05901">
                                     <when test="1">
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%060_R-%TT%%CC%06001" IndentLevel="2" />
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%061_R-%TT%%CC%06101" IndentLevel="2" />
-                                      <ParameterBlock Id="%AID%_PB-nnn" Name="CurrentSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%060_R-%TT%%CC%06001" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%061_R-%TT%%CC%06101" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="CurrentSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
                                         <Rows>
                                           <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                                         </Rows>
@@ -381,12 +381,12 @@
                                   </choose>
 
                                   <ParameterSeparator Id="%AID%_PS-nnn" Text="Spannung" UIHint="Headline" />
-                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%064_R-%TT%%CC%06401" IndentLevel="1" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%064_R-%TT%%CC%06401" IndentLevel="1" HelpContext="%DOC%" />
                                   <choose ParamRefId="%AID%_UP-%TT%%CC%064_R-%TT%%CC%06401">
                                     <when test="1">
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%065_R-%TT%%CC%06501" IndentLevel="2" />
-                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%066_R-%TT%%CC%06601" IndentLevel="2" />
-                                      <ParameterBlock Id="%AID%_PB-nnn" Name="VoltageSend" Inline="true" Layout="Grid"> <!-- cyclic pattern -->
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%065_R-%TT%%CC%06501" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%066_R-%TT%%CC%06601" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="VoltageSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
                                         <Rows>
                                           <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
                                         </Rows>
