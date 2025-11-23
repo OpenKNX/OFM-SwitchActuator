@@ -77,8 +77,11 @@ void SwitchActuatorModule::setup(bool configured)
 
 void SwitchActuatorModule::loop()
 {
+#ifdef OPENKNX_SWA_BL0942_SPI
     float totalCurrent = 0.0f;
     float totalPower = 0.0f;
+#endif
+
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
     {
         channel[i]->loop();
