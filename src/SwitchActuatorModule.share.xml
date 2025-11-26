@@ -134,9 +134,9 @@
               <ParameterRef Id="%AID%_P-%TT%00018_R-%TT%0001801" RefId="%AID%_P-%TT%00018" />
             </ParameterRefs>
             <ComObjectTable>
-              <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
-              <ComObject Id="%AID%_O-%TT%00002" Name="TotalPower" Number="1" ObjectSize="4 Bytes" Text="" FunctionText="Gesamtleistung" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-56" />
-              <ComObject Id="%AID%_O-%TT%00003" Name="TotalCurrent" Number="2" ObjectSize="4 Bytes" Text="" FunctionText="Gesamtstrom" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-19" />
+              <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="SA: Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
+              <ComObject Id="%AID%_O-%TT%00002" Name="TotalPower" Number="1" ObjectSize="4 Bytes" Text="Gesamtleistung" FunctionText="SA: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-56" />
+              <ComObject Id="%AID%_O-%TT%00003" Name="TotalCurrent" Number="2" ObjectSize="4 Bytes" Text="Gesamtstrom" FunctionText="SA: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-19" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="%AID%_O-%TT%00001_R-%TT%0000101" RefId="%AID%_O-%TT%00001" />
