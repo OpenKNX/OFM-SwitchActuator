@@ -14,6 +14,6 @@
         "url": "https://github.com/OpenKNX/OFM-SwitchActuator"
     },
     "dependencies": {
-        "BL0942": "https://github.com/ab-tools/BL0942#spi-support"
+        "BL0942_SPI": "https://github.com/RobTillaart/BL0942_SPI.git#develop"
     }
 }

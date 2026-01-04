@@ -460,13 +460,8 @@ void SwitchActuatorChannel::loop()
         delay(10); // wait for BL0942 to start up
 
         setChannelSelectorBl0942(false);
-        bl0942.setChannelSelector([this](bool active){
-            this->setChannelSelectorBl0942(active);
-        });
-        bl0942.onDataReceived([this](bl0942::SensorData &data){
-            this->dataReceivedBl0942(data);
-        });
-
+        SwitchActuatorChannel::switchActuatorChannelInstance = this;
+        bl0942.setChannelSelector(SwitchActuatorChannel::bl0942ChannelSelector);
         initBl0942();
 
         if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
@@ -477,37 +472,147 @@ void SwitchActuatorChannel::loop()
             voltageCyclicSendTimer = delayTimerInit();
         
         bl0942Initialized = true;
+        
+        Serial.println("dump all registers in HEX\n");
+
+        Serial.print("BL0942_REG_I_WAVE:\t");
+        Serial.println(bl0942.readRegister(0x01), HEX);
+        Serial.print("BL0942_REG_V_WAVE:\t");
+        Serial.println(bl0942.readRegister(0x02), HEX);
+        Serial.print("BL0942_REG_I_RMS:\t");
+        Serial.println(bl0942.readRegister(0x03), HEX);
+        Serial.print("BL0942_REG_V_RMS:\t");
+        Serial.println(bl0942.readRegister(0x04), HEX);
+        Serial.print("BL0942_REG_I_FAST_RMS:\t");
+        Serial.println(bl0942.readRegister(0x05), HEX);
+        Serial.print("BL0942_REG_WATT:\t");
+        Serial.println(bl0942.readRegister(0x06), HEX);
+        Serial.print("BL0942_REG_CF_CNT:\t");
+        Serial.println(bl0942.readRegister(0x07), HEX);
+        Serial.print("BL0942_REG_FREQ:\t");
+        Serial.println(bl0942.readRegister(0x08), HEX);
+        Serial.print("BL0942_REG_STATUS:\t");
+        Serial.println(bl0942.readRegister(0x09), HEX);
+        Serial.print("BL0942_REG_I_RMSOS:\t");
+        Serial.println(bl0942.readRegister(0x12), HEX);
+        Serial.print("BL0942_REG_WA_CREEP:\t");
+        Serial.println(bl0942.readRegister(0x14), HEX);
+        Serial.print("BL0942_REG_I_FAST_RMS_TH:\t");
+        Serial.println(bl0942.readRegister(0x15), HEX);
+        Serial.print("BL0942_REG_I_FAST_RMS_CYC:\t");
+        Serial.println(bl0942.readRegister(0x16), HEX);
+        Serial.print("BL0942_REG_FREQ_CYC:\t");
+        Serial.println(bl0942.readRegister(0x17), HEX);
+        Serial.print("BL0942_REG_OT_FUNX:\t");
+        Serial.println(bl0942.readRegister(0x18), HEX);
+        Serial.print("BL0942_REG_MODE:\t");
+        Serial.println(bl0942.readRegister(0x19), HEX);
+        Serial.print("BL0942_REG_GAIN_CR:\t");
+        Serial.println(bl0942.readRegister(0x1A), HEX);
+        Serial.print("BL0942_REG_SOFT_RESET:\t");
+        Serial.println(bl0942.readRegister(0x1C), HEX);
+        Serial.print("BL0942_REG_USR_WRPROT:\t");
+        Serial.println(bl0942.readRegister(0x1D), HEX);
     }
 
     if (bl0942Initialized)
     {
         if (delayCheck(bl0942UpdateTimer, OPENKNX_SWA_BL0942_LOOP_DELAY))
         {
-            bl0942.loop();
+            float voltage = bl0942.getVRMS();
+            float current = bl0942.getIRMS();
+            float watt = bl0942.getWatt();
+
+            if (_channelIndex == 0)
+            {
+                if (delayCheck(_debugTimer, 2000))
+                {
+                    logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", voltage, current, watt);
+                    _debugTimer = delayTimerInit();
+                }
+            }
+
+            if (OPENKNX_SWA_BL0942_INVERT_DIRECTION)
+                watt = -watt;
+
+            if (watt < 0)
+                current *= -1;
+
+            lastReceivedPower = watt;
+            lastReceivedCurrent = current;
+            lastReceivedVoltage = voltage;
+
+            if (ParamSWA_ChPowerSend)
+            {
+                uint16_t powerDifference = round(abs(lastSentPower - watt));
+                if (powerDifference > 0)
+                {
+                    if (lastSentPower > 0 && powerDifference >= lastSentPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f &&
+                        powerDifference >= ParamSWA_ChPowerSendMinChangeAbsolute)
+                    {
+                        KoSWA_ChPower.value(watt, DPT_Value_Power);
+                        lastSentPower = watt;
+                    }
+                    else
+                        KoSWA_ChPower.valueNoSend(watt, DPT_Value_Power);
+                }
+            }
+
+            if (ParamSWA_ChCurrentSend)
+            {
+                uint16_t currentDifference = round(abs(lastSentCurrent - current * 1000));
+                if (currentDifference > 0)
+                {
+                    if (lastSentCurrent > 0 && currentDifference >= lastSentCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
+                        currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
+                    {
+                        KoSWA_ChCurrent.value(current, DPT_Value_Electric_Current);
+                        lastSentCurrent = current * 1000;
+                    }
+                    else
+                        KoSWA_ChCurrent.valueNoSend(current, DPT_Value_Electric_Current);
+                }
+            }
+
+            if (ParamSWA_ChVoltageSend)
+            {
+                uint16_t voltageDifference = round(abs(lastSentVoltage - voltage));
+                if (voltageDifference > 0)
+                {
+                    if (lastSentVoltage > 0 && voltageDifference >= lastSentVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
+                        voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
+                    {
+                        KoSWA_ChVoltage.value(voltage, DPT_Value_Electric_Potential);
+                        lastSentVoltage = voltage;
+                    }
+                    else
+                        KoSWA_ChVoltage.valueNoSend(voltage, DPT_Value_Electric_Potential);
+                }
+            }
             bl0942UpdateTimer = delayTimerInit();
         }
 
         if (ParamSWA_ChPowerSend &&
             powerCyclicSendTimer > 0 && delayCheck(powerCyclicSendTimer, ParamSWA_ChPowerSendCyclicTimeMS))
         {
-            KoSWA_ChPower.value(lastDataReceived.watt, DPT_Value_Power);
-            lastSentPower = lastDataReceived.watt;
+            KoSWA_ChPower.value(lastReceivedPower, DPT_Value_Power);
+            lastSentPower = lastReceivedPower;
             powerCyclicSendTimer = delayTimerInit();
         }
 
         if (ParamSWA_ChCurrentSend &&
             currentCyclicSendTimer > 0 && delayCheck(currentCyclicSendTimer, ParamSWA_ChCurrentSendCyclicTimeMS))
         {
-            KoSWA_ChCurrent.value(lastDataReceived.current, DPT_Value_Electric_Current);
-            lastSentCurrent = lastDataReceived.current * 1000;
+            KoSWA_ChCurrent.value(lastReceivedCurrent, DPT_Value_Electric_Current);
+            lastSentCurrent = lastReceivedCurrent * 1000;
             currentCyclicSendTimer = delayTimerInit();
         }
 
         if (ParamSWA_ChVoltageSend &&
             voltageCyclicSendTimer > 0 && delayCheck(voltageCyclicSendTimer, ParamSWA_ChVoltageSendCyclicTimeMS))
         {
-            KoSWA_ChVoltage.value(lastDataReceived.voltage, DPT_Value_Electric_Potential);
-            lastSentVoltage = lastDataReceived.voltage;
+            KoSWA_ChVoltage.value(lastReceivedVoltage, DPT_Value_Electric_Potential);
+            lastSentVoltage = lastReceivedVoltage;
             voltageCyclicSendTimer = delayTimerInit();
         }
     }
@@ -518,119 +623,67 @@ void SwitchActuatorChannel::loop()
 #ifdef OPENKNX_SWA_BL0942_SPI
 void SwitchActuatorChannel::initBl0942()
 {
-    bl0942::ModeConfig config;
+    // bl0942::ModeConfig config;
 
-    // RMS refresh time (choose one)
-    config.rms_update_freq = bl0942::UPDATE_FREQUENCY_400MS;  // or UPDATE_FREQUENCY_800MS
+    // // RMS refresh time (choose one)
+    // config.rms_update_freq = bl0942::UPDATE_FREQUENCY_400MS;  // or UPDATE_FREQUENCY_800MS
 
-    // RMS waveform type
-    config.rms_waveform = bl0942::RMS_WAVEFORM_FULL;          // or RMS_WAVEFORM_AC
+    // // RMS waveform type
+    // config.rms_waveform = bl0942::RMS_WAVEFORM_FULL;          // or RMS_WAVEFORM_AC
 
-    // Line frequency
-    config.ac_freq = bl0942::LINE_FREQUENCY_50HZ;             // or LINE_FREQUENCY_60HZ
+    // // Line frequency
+    // config.ac_freq = bl0942::LINE_FREQUENCY_50HZ;             // or LINE_FREQUENCY_60HZ
 
-    // Clear energy counter on read
-    //config.clear_mode = bl0942::CNT_CLR_SEL_ENABLE;           // or CNT_CLR_SEL_DISABLE
-    config.clear_mode = bl0942::CNT_CLR_SEL_DISABLE;           // or CNT_CLR_SEL_DISABLE
+    // // Clear energy counter on read
+    // //config.clear_mode = bl0942::CNT_CLR_SEL_ENABLE;           // or CNT_CLR_SEL_DISABLE
+    // config.clear_mode = bl0942::CNT_CLR_SEL_DISABLE;           // or CNT_CLR_SEL_DISABLE
 
-    // Accumulation mode
-    config.accumulation_mode = bl0942::ACCUMULATION_MODE_ABSOLUTE;  // or ALGEBRAIC
+    // // Accumulation mode
+    // config.accumulation_mode = bl0942::ACCUMULATION_MODE_ABSOLUTE;  // or ALGEBRAIC
 
-    bl0942.setup(config);
-    bl0942.setCalibration(OPENKNX_SWA_BL0942_PREF, OPENKNX_SWA_BL0942_UREF, OPENKNX_SWA_BL0942_IREF, OPENKNX_SWA_BL0942_EREF);
-    //bl0942.print_registers();
+    // bl0942.setup(config);
+
+    bl0942.begin();
+    bl0942.calibrate(0.001f);
+
+    uint16_t mode =
+        BL0942_MODE_RMS_UPDATE_400MS |
+        BL0942_MODE_RMS_WAVEFORM_FULL |
+        BL0942_MODE_AC_FREQUENCY_50HZ |
+        BL0942_MODE_ACCU_MODE_ABSOLUTE;
+    bl0942.setUserMode(mode);
+}
+
+SwitchActuatorChannel* SwitchActuatorChannel::switchActuatorChannelInstance = nullptr;
+
+void SwitchActuatorChannel::bl0942ChannelSelector(bool active)
+{
+    if (switchActuatorChannelInstance)
+        switchActuatorChannelInstance->setChannelSelectorBl0942(active);
 }
 
 void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
 {
     if (active)
     {
-        logTraceP("BL0942: selecting channel");
+        logDebugP("BL0942: selecting channel");
         openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
     }
     else
     {
-        logTraceP("BL0942: unselecting channel");
+        logDebugP("BL0942: unselecting channel");
         openknx.gpio.digitalWrite(RELAY_MEASURE_CS_PINS[_channelIndex], !OPENKNX_SWA_MEASURE_CS_ACTIVE_ON);
-    }
-}
-
-void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
-{
-    if (_channelIndex == 0)
-    {
-        if (delayCheck(_debugTimer, 2000))
-        {
-            logDebugP("U: %.2f V, I: %.2f A, P: %.2f W", data.voltage, data.current, data.watt);
-            _debugTimer = delayTimerInit();
-        }
-    }
-
-    if (OPENKNX_SWA_BL0942_INVERT_DIRECTION)
-        data.watt = -data.watt;
-
-    if (data.watt < 0)
-        data.current *= -1;
-
-    lastDataReceived = data;
-
-    if (ParamSWA_ChPowerSend)
-    {
-        uint16_t powerDifference = round(abs(lastSentPower - data.watt));
-        if (powerDifference > 0)
-        {
-            if (lastSentPower > 0 && powerDifference >= lastSentPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f &&
-                powerDifference >= ParamSWA_ChPowerSendMinChangeAbsolute)
-            {
-                KoSWA_ChPower.value(data.watt, DPT_Value_Power);
-                lastSentPower = data.watt;
-            }
-            else
-                KoSWA_ChPower.valueNoSend(data.watt, DPT_Value_Power);
-        }
-    }
-
-    if (ParamSWA_ChCurrentSend)
-    {
-        uint16_t currentDifference = round(abs(lastSentCurrent - data.current * 1000));
-        if (currentDifference > 0)
-        {
-            if (lastSentCurrent > 0 && currentDifference >= lastSentCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
-                currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
-            {
-                KoSWA_ChCurrent.value(data.current, DPT_Value_Electric_Current);
-                lastSentCurrent = data.current * 1000;
-            }
-            else
-                KoSWA_ChCurrent.valueNoSend(data.current, DPT_Value_Electric_Current);
-        }
-    }
-
-    if (ParamSWA_ChVoltageSend)
-    {
-        uint16_t voltageDifference = round(abs(lastSentVoltage - data.voltage));
-        if (voltageDifference > 0)
-        {
-            if (lastSentVoltage > 0 && voltageDifference >= lastSentVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
-                voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
-            {
-                KoSWA_ChVoltage.value(data.voltage, DPT_Value_Electric_Potential);
-                lastSentVoltage = data.voltage;
-            }
-            else
-                KoSWA_ChVoltage.valueNoSend(data.voltage, DPT_Value_Electric_Potential);
-        }
     }
 }
 
 float SwitchActuatorChannel::getPower()
 {
-    return lastDataReceived.watt;
+    return lastReceivedPower;
 }
 
 float SwitchActuatorChannel::getCurrent()
 {
-    return lastDataReceived.current;
+    return lastReceivedCurrent;
 }
 #endif
 

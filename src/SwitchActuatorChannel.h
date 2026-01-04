@@ -1,7 +1,7 @@
 #pragma once
 #include "OpenKNX.h"
 #ifdef OPENKNX_SWA_BL0942_SPI
-  #include "BL0942.h"
+  #include "BL0942_SPI.h"
 
   #define OPENKNX_SWA_BL0942_INIT_DELAY 5000 // wait 5s to let capacitors charge first
   #define OPENKNX_SWA_BL0942_LOOP_DELAY 100
@@ -27,12 +27,14 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void relaisOff();
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-    bl0942::BL0942 bl0942 = bl0942::BL0942(OPENKNX_SWA_BL0942_SPI);
-    bl0942::SensorData lastDataReceived;
+    BL0942_SPI bl0942 = BL0942_SPI(14, &OPENKNX_SWA_BL0942_SPI);
 
     bool bl0942Initialized = false;
     uint32_t bl0942StartupDelay = 0;
     uint32_t bl0942UpdateTimer = 0;
+    float lastReceivedPower = 0;
+    float lastReceivedCurrent = 0;
+    float lastReceivedVoltage = 0;
     float lastSentPower = 0;
     float lastSentCurrent = 0;
     float lastSentVoltage = 0;
@@ -42,7 +44,8 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 
     uint32_t _debugTimer = 0;
 
-    void dataReceivedBl0942(bl0942::SensorData &data);
+    static SwitchActuatorChannel* switchActuatorChannelInstance;
+    static void bl0942ChannelSelector(bool active);
     void setChannelSelectorBl0942(bool active);
     void initBl0942();
 #endif
