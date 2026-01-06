@@ -44,8 +44,6 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 
     uint32_t _debugTimer = 0;
 
-    static SwitchActuatorChannel* switchActuatorChannelInstance;
-    static void bl0942ChannelSelector(bool active);
     void setChannelSelectorBl0942(bool active);
     void initBl0942();
 #endif
