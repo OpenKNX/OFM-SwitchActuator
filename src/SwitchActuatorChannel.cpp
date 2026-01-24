@@ -487,29 +487,9 @@ void SwitchActuatorChannel::loop()
             bl0942UpdateTimer = delayTimerInit();
         }
 
-        if (ParamSWA_ChPowerSend &&
-            powerCyclicSendTimer > 0 && delayCheck(powerCyclicSendTimer, ParamSWA_ChPowerSendCyclicTimeMS))
-        {
-            KoSWA_ChPower.value(lastDataReceived.watt, DPT_Value_Power);
-            lastSentPower = lastDataReceived.watt;
-            powerCyclicSendTimer = delayTimerInit();
-        }
-
-        if (ParamSWA_ChCurrentSend &&
-            currentCyclicSendTimer > 0 && delayCheck(currentCyclicSendTimer, ParamSWA_ChCurrentSendCyclicTimeMS))
-        {
-            KoSWA_ChCurrent.value(lastDataReceived.current, DPT_Value_Electric_Current);
-            lastSentCurrent = lastDataReceived.current * 1000;
-            currentCyclicSendTimer = delayTimerInit();
-        }
-
-        if (ParamSWA_ChVoltageSend &&
-            voltageCyclicSendTimer > 0 && delayCheck(voltageCyclicSendTimer, ParamSWA_ChVoltageSendCyclicTimeMS))
-        {
-            KoSWA_ChVoltage.value(lastDataReceived.voltage, DPT_Value_Electric_Potential);
-            lastSentVoltage = lastDataReceived.voltage;
-            voltageCyclicSendTimer = delayTimerInit();
-        }
+        openknxSwitchActuatorModule.processSendValue(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, ParamSWA_ChPowerSendCyclicTimeMS, powerCyclicSendTimer, lastSentPower, lastDataReceived.watt);
+        openknxSwitchActuatorModule.processSendValue(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, ParamSWA_ChCurrentSendCyclicTimeMS, currentCyclicSendTimer, lastSentCurrent, lastDataReceived.current, 1000);
+        openknxSwitchActuatorModule.processSendValue(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, ParamSWA_ChVoltageSendCyclicTimeMS, voltageCyclicSendTimer, lastSentVoltage, lastDataReceived.voltage);
     }
 #endif
 #endif
@@ -573,54 +553,6 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         data.current *= -1;
 
     lastDataReceived = data;
-
-    if (ParamSWA_ChPowerSend)
-    {
-        uint16_t powerDifference = round(abs(lastSentPower - data.watt));
-        if (powerDifference > 0)
-        {
-            if (lastSentPower > 0 && powerDifference >= lastSentPower * ParamSWA_ChPowerSendMinChangePercent / 100.0f &&
-                powerDifference >= ParamSWA_ChPowerSendMinChangeAbsolute)
-            {
-                KoSWA_ChPower.value(data.watt, DPT_Value_Power);
-                lastSentPower = data.watt;
-            }
-            else
-                KoSWA_ChPower.valueNoSend(data.watt, DPT_Value_Power);
-        }
-    }
-
-    if (ParamSWA_ChCurrentSend)
-    {
-        uint16_t currentDifference = round(abs(lastSentCurrent - data.current * 1000));
-        if (currentDifference > 0)
-        {
-            if (lastSentCurrent > 0 && currentDifference >= lastSentCurrent * ParamSWA_ChCurrentSendMinChangePercent / 100.0f &&
-                currentDifference >= ParamSWA_ChCurrentSendMinChangeAbsolute)
-            {
-                KoSWA_ChCurrent.value(data.current, DPT_Value_Electric_Current);
-                lastSentCurrent = data.current * 1000;
-            }
-            else
-                KoSWA_ChCurrent.valueNoSend(data.current, DPT_Value_Electric_Current);
-        }
-    }
-
-    if (ParamSWA_ChVoltageSend)
-    {
-        uint16_t voltageDifference = round(abs(lastSentVoltage - data.voltage));
-        if (voltageDifference > 0)
-        {
-            if (lastSentVoltage > 0 && voltageDifference >= lastSentVoltage * ParamSWA_ChVoltageSendMinChangePercent / 100.0f &&
-                voltageDifference >= ParamSWA_ChVoltageSendMinChangeAbsolute)
-            {
-                KoSWA_ChVoltage.value(data.voltage, DPT_Value_Electric_Potential);
-                lastSentVoltage = data.voltage;
-            }
-            else
-                KoSWA_ChVoltage.valueNoSend(data.voltage, DPT_Value_Electric_Potential);
-        }
-    }
 }
 
 float SwitchActuatorChannel::getPower()
