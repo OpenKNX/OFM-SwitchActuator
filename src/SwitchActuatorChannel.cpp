@@ -475,46 +475,54 @@ void SwitchActuatorChannel::loop()
         
         bl0942Initialized = true;
         
-        Serial.println("dump all registers in HEX\n");
+        Serial.println("get all registers");
+        Serial.println("READ ONLY\n");
 
         Serial.print("BL0942_REG_I_WAVE:\t");
-        Serial.println(bl0942.readRegister(0x01), HEX);
+        Serial.println(bl0942.getIWave());
         Serial.print("BL0942_REG_V_WAVE:\t");
-        Serial.println(bl0942.readRegister(0x02), HEX);
+        Serial.println(bl0942.getVWave());
         Serial.print("BL0942_REG_I_RMS:\t");
-        Serial.println(bl0942.readRegister(0x03), HEX);
+        Serial.println(bl0942.getIRMS());
         Serial.print("BL0942_REG_V_RMS:\t");
-        Serial.println(bl0942.readRegister(0x04), HEX);
+        Serial.println(bl0942.getVRMS());
+
         Serial.print("BL0942_REG_I_FAST_RMS:\t");
-        Serial.println(bl0942.readRegister(0x05), HEX);
+        Serial.println(bl0942.getIRMSFast());
         Serial.print("BL0942_REG_WATT:\t");
-        Serial.println(bl0942.readRegister(0x06), HEX);
+        Serial.println(bl0942.getWatt());
         Serial.print("BL0942_REG_CF_CNT:\t");
-        Serial.println(bl0942.readRegister(0x07), HEX);
+        Serial.println(bl0942.getCFPulseCount());
         Serial.print("BL0942_REG_FREQ:\t");
-        Serial.println(bl0942.readRegister(0x08), HEX);
+        Serial.println(bl0942.getFrequency());
         Serial.print("BL0942_REG_STATUS:\t");
-        Serial.println(bl0942.readRegister(0x09), HEX);
+        Serial.println(bl0942.getStatus());
+
+
+        Serial.println("\nREAD WRITE\n");
+
         Serial.print("BL0942_REG_I_RMSOS:\t");
-        Serial.println(bl0942.readRegister(0x12), HEX);
+        Serial.println(bl0942.getCurrentRMSOffset());
         Serial.print("BL0942_REG_WA_CREEP:\t");
-        Serial.println(bl0942.readRegister(0x14), HEX);
+        Serial.println(bl0942.getPowerCreep());
         Serial.print("BL0942_REG_I_FAST_RMS_TH:\t");
-        Serial.println(bl0942.readRegister(0x15), HEX);
+        Serial.println(bl0942.getFastRMSThreshold());
         Serial.print("BL0942_REG_I_FAST_RMS_CYC:\t");
-        Serial.println(bl0942.readRegister(0x16), HEX);
+        Serial.println(bl0942.getFastRMSCycles());
         Serial.print("BL0942_REG_FREQ_CYC:\t");
-        Serial.println(bl0942.readRegister(0x17), HEX);
+        Serial.println(bl0942.getFrequencyCycles());
+
+
         Serial.print("BL0942_REG_OT_FUNX:\t");
-        Serial.println(bl0942.readRegister(0x18), HEX);
+        Serial.println(bl0942.getOutputConfigMask());
         Serial.print("BL0942_REG_MODE:\t");
-        Serial.println(bl0942.readRegister(0x19), HEX);
+        Serial.println(bl0942.getUserMode());
         Serial.print("BL0942_REG_GAIN_CR:\t");
-        Serial.println(bl0942.readRegister(0x1A), HEX);
-        Serial.print("BL0942_REG_SOFT_RESET:\t");
-        Serial.println(bl0942.readRegister(0x1C), HEX);
+        Serial.println(bl0942.getCurrentGain());
+        //  Serial.print("BL0942_REG_SOFT_RESET:\t");
+        //  Serial.println(bl0942.readRegister(0x1C), HEX);
         Serial.print("BL0942_REG_USR_WRPROT:\t");
-        Serial.println(bl0942.readRegister(0x1D), HEX);
+        Serial.println(bl0942.getCurrentGain());
     }
 
     if (bl0942Initialized)
@@ -646,14 +654,20 @@ void SwitchActuatorChannel::initBl0942()
     // bl0942.setup(config);
 
     bl0942.begin();
-    bl0942.calibrate(0.001f);
+    float RF = (390000.0 * 5 + 510.0) / 510.0;
+    float SHUNT = 0.001;
+    bl0942.calibrate(SHUNT, RF);
 
     uint16_t mode =
         BL0942_MODE_RMS_UPDATE_400MS |
         BL0942_MODE_RMS_WAVEFORM_FULL |
         BL0942_MODE_AC_FREQUENCY_50HZ |
         BL0942_MODE_ACCU_MODE_ABSOLUTE;
+    bl0942.setWriteProtect(false);
     bl0942.setUserMode(mode);
+    bl0942.setWriteProtect(true);
+
+    logDebugP("BL0942: user mode %u set and %u read back", mode, bl0942.getUserMode());
 }
 
 void SwitchActuatorChannel::setChannelSelectorBl0942(bool active)
