@@ -496,7 +496,7 @@ void SwitchActuatorChannel::loop()
         Serial.print("BL0942_REG_FREQ:\t");
         Serial.println(bl0942.getFrequency());
         Serial.print("BL0942_REG_STATUS:\t");
-        Serial.println(bl0942.getStatus());
+        Serial.println(bl0942.getStatus(), HEX);
 
 
         Serial.println("\nREAD WRITE\n");
@@ -514,7 +514,7 @@ void SwitchActuatorChannel::loop()
 
 
         Serial.print("BL0942_REG_OT_FUNX:\t");
-        Serial.println(bl0942.getOutputConfigMask());
+        Serial.println(bl0942.getOutputConfigMask(), HEX);
         Serial.print("BL0942_REG_MODE:\t");
         Serial.println(bl0942.getUserMode());
         Serial.print("BL0942_REG_GAIN_CR:\t");
