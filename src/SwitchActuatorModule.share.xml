@@ -86,14 +86,14 @@
               <Parameter Id="%AID%_P-%TT%00004" Name="HardwareVariantCanMeasure" ParameterType="%AID%_PT-OnOffYesNo" Text="" Value="0" Access="None"/>
               <Parameter Id="%AID%_P-%TT%00017" Name="VisibleChannels8" ParameterType="%AID%_PT-SWANumChannels8" Text="Verfügbare Kanäle" Value="8" SuffixText=" von 8"/>
               <Parameter Id="%AID%_P-%TT%00018" Name="VisibleChannels6" ParameterType="%AID%_PT-SWANumChannels6" Text="Verfügbare Kanäle" Value="6" SuffixText=" von 6"/>
-              <Union SizeInBit="8">
+              <Union SizeInBit="16">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00001" Name="VisibleChannels" ParameterType="%AID%_PT-SWANumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%SWA_NumChannelsDefault%" SuffixText=" von %N%" />
-                <Parameter Id="%AID%_UP-%TT%00003" Name="HardwareVariant" ParameterType="%AID%_PT-SWAHardwareVariant" Offset="0" BitOffset="1" Text="Hardware-Variante" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00003" Name="HardwareVariant" ParameterType="%AID%_PT-SWAHardwareVariant" Offset="1" BitOffset="0" Text="Hardware-Variante" Value="0" />
                 <!-- 3 bits free -->
               </Union>
               <Union SizeInBit="88">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="1" BitOffset="0" />
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="2" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00005" Name="TotalPowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Gesamtleistung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00010" Name="TotalCurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Gesamtstrom senden" Value="0" />
                 <!-- 6 bits free -->
@@ -107,7 +107,7 @@
                 <Parameter Id="%AID%_UP-%TT%00014" Name="TotalCurrentSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="9" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
               <Union SizeInBit="16">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="16" BitOffset="0" />
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="17" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00015" Name="FrontControlInput" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Frontbedienung aktivieren" Value="1" />
                 <Parameter Id="%AID%_UP-%TT%00016" Name="FrontControlOutput" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="LED-Ausgabe aktivieren" Value="1" />
                 <!-- 6 bits free -->
