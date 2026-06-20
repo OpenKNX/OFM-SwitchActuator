@@ -1,5 +1,6 @@
 #pragma once
 #include "OpenKNX.h"
+#include "StatusOutput.h"
 #ifdef OPENKNX_SWA_BL0942_SPI
   #include "BL0942.h"
 
@@ -33,12 +34,9 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     bool bl0942Initialized = false;
     uint32_t bl0942StartupDelay = 0;
     uint32_t bl0942UpdateTimer = 0;
-    float lastSentPower = 0;
-    float lastSentCurrent = 0;
-    float lastSentVoltage = 0;
-    uint32_t powerCyclicSendTimer = 0;
-    uint32_t currentCyclicSendTimer = 0;
-    uint32_t voltageCyclicSendTimer = 0;
+    SwaStatus::ValueState _statusPower;
+    SwaStatus::ValueState _statusCurrent;
+    SwaStatus::ValueState _statusVoltage;
 
     uint32_t _debugTimer = 0;
 

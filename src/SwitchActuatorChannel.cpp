@@ -429,11 +429,9 @@ void SwitchActuatorChannel::loop()
         turnOffDelayTimer = 0;
     }
 
-    if (statusCyclicSendTimer > 0 && delayCheck(statusCyclicSendTimer, ParamSWA_ChStatusCyclicTimeMS))
-    {
-        KoSWA_ChStatus.objectWritten();
-        statusCyclicSendTimer = delayTimerInit();
-    }
+    // On/off status is sent immediately on change in doSwitchInternal(); here we only handle the
+    // cyclic resend through the shared helper so all status outputs use the same mechanism.
+    SwaStatus::sendSwitch(KoSWA_ChStatus, true, isRelayActive(), ParamSWA_ChStatusCyclicTimeMS, statusCyclicSendTimer);
 
 #ifdef OPENKNX_SWA_SWITCH_PINS
     if (ParamSWA_FrontControlInput)
@@ -469,13 +467,6 @@ void SwitchActuatorChannel::loop()
 
         initBl0942();
 
-        if (ParamSWA_ChPowerSendCyclicTimeMS > 0)
-            powerCyclicSendTimer = delayTimerInit();
-        if (ParamSWA_ChCurrentSendCyclicTimeMS > 0)
-            currentCyclicSendTimer = delayTimerInit();
-        if (ParamSWA_ChVoltageSendCyclicTimeMS > 0)
-            voltageCyclicSendTimer = delayTimerInit();
-        
         bl0942Initialized = true;
     }
 
@@ -487,9 +478,9 @@ void SwitchActuatorChannel::loop()
             bl0942UpdateTimer = delayTimerInit();
         }
 
-        openknxSwitchActuatorModule.processSendValue(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, ParamSWA_ChPowerSendCyclicTimeMS, powerCyclicSendTimer, lastSentPower, lastDataReceived.watt);
-        openknxSwitchActuatorModule.processSendValue(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, ParamSWA_ChCurrentSendCyclicTimeMS, currentCyclicSendTimer, lastSentCurrent, lastDataReceived.current, 1000);
-        openknxSwitchActuatorModule.processSendValue(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, ParamSWA_ChVoltageSendCyclicTimeMS, voltageCyclicSendTimer, lastSentVoltage, lastDataReceived.voltage);
+        SwaStatus::sendValue<float>(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, false, lastDataReceived.watt, _statusPower, ParamSWA_ChPowerSendCyclicTimeMS, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+        SwaStatus::sendValue<float>(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, false, lastDataReceived.current, _statusCurrent, ParamSWA_ChCurrentSendCyclicTimeMS, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f);
+        SwaStatus::sendValue<float>(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, false, lastDataReceived.voltage, _statusVoltage, ParamSWA_ChVoltageSendCyclicTimeMS, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
     }
 #endif
 #endif

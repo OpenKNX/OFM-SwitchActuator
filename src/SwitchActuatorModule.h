@@ -51,8 +51,6 @@ class SwitchActuatorModule : public OpenKNX::Module
     const std::string name() override;
     const std::string version() override;
 
-    void processSendValue(GroupObject &ko, Dpt dpt, bool send, uint8_t sendMinChangePercent, uint16_t sendMinChangeAbsolute, uint32_t sendCyclicTimeMS, uint32_t &cyclicSendTimer, float &lastSentValue, float currentValue, uint16_t checkMultiply = 1);
-
     void showHelp() override;
     bool processCommand(const std::string cmd, bool diagnoseKo) override;
     void runTestMode();
@@ -61,10 +59,8 @@ class SwitchActuatorModule : public OpenKNX::Module
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-    float _lastTotalCurrentSent = 0.0f;
-    uint32_t _totalCurrentSendTimer = 0;
-    float _lastTotalPowerSent = 0.0f;
-    uint32_t _totalPowerSendTimer = 0;
+    SwaStatus::ValueState _statusTotalCurrent;
+    SwaStatus::ValueState _statusTotalPower;
 #endif
 };
 
