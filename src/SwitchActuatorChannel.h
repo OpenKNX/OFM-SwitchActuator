@@ -1,10 +1,14 @@
 #pragma once
 #include "OpenKNX.h"
+#include "StatusOutput.h"
+#ifdef OPENKNX_SWA_BL0942_SPI
+  #include "BL0942.h"
 
-#define RELAY_GPIO_SET_ON    OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? HIGH : LOW
-#define RELAY_GPIO_SET_OFF   OPENKNX_SWA_SET_ACTIVE_ON == HIGH ? LOW : HIGH
-#define RELAY_GPIO_RESET_ON  OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? HIGH : LOW
-#define RELAY_GPIO_RESET_OFF OPENKNX_SWA_RESET_ACTIVE_ON == HIGH ? LOW : HIGH
+  #define OPENKNX_SWA_BL0942_INIT_DELAY 5000 // wait 5s to let capacitors charge first
+  #define OPENKNX_SWA_BL0942_LOOP_DELAY 100
+#endif
+
+#define SWITCH_DEBOUNCE 250
 
 class SwitchActuatorChannel : public OpenKNX::Channel
 {
@@ -15,6 +19,7 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     uint32_t relayBistableImpulsTimer = 0;
     uint32_t turnOnDelayTimer = 0;
     uint32_t turnOffDelayTimer = 0;
+    uint32_t switchLastTrigger = 0;
 
     void doSwitchInternal(bool active, bool syncSwitch = true);
     void processSwitchInput(bool newActive);
@@ -22,18 +27,41 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     void processScene(uint8_t sceneNumber, bool learn);
     void relaisOff();
 
+#ifdef OPENKNX_SWA_BL0942_SPI
+    bl0942::BL0942 bl0942 = bl0942::BL0942(OPENKNX_SWA_BL0942_SPI);
+    bl0942::SensorData lastDataReceived;
+
+    bool bl0942Initialized = false;
+    uint32_t bl0942StartupDelay = 0;
+    uint32_t bl0942UpdateTimer = 0;
+    SwaStatus::ValueState _statusPower;
+    SwaStatus::ValueState _statusCurrent;
+    SwaStatus::ValueState _statusVoltage;
+
+    uint32_t _debugTimer = 0;
+
+    void dataReceivedBl0942(bl0942::SensorData &data);
+    void setChannelSelectorBl0942(bool active);
+    void initBl0942();
+#endif
+
   protected:
 
   public:
     SwitchActuatorChannel(uint8_t iChannelNumber);
     ~SwitchActuatorChannel();
 
-    void processInputKo(GroupObject &iKo);
-    void setup(bool configured);
-    void loop();
+    void processInputKo(GroupObject &iKo) override;
+    void setup(bool configured) override;
+    void loop() override;
 
     void doSwitch(bool active, bool syncSwitch = true);
     bool isRelayActive();
     void savePower();
     bool restorePower();
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    float getPower();
+    float getCurrent();
+#endif
 };

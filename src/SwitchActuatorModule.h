@@ -7,13 +7,6 @@
 #define OPENKNX_SWA_FLASH_VERSION 0
 #define OPENKNX_SWA_FLASH_MAGIC_WORD 3441922009
 
-#define CH_SWITCH_DEBOUNCE 250
-
-#define GPIO_OUTPUT_ON  OPENKNX_SWA_GPIO_OUTPUT_ACTIVE_ON == HIGH ? HIGH : LOW
-#define GPIO_OUTPUT_OFF OPENKNX_SWA_GPIO_OUTPUT_ACTIVE_ON == HIGH ? LOW : HIGH
-#define GPIO_INPUT_ON   OPENKNX_SWA_GPIO_INPUT_ACTIVE_ON == HIGH ? HIGH : LOW
-#define GPIO_INPUT_OFF  OPENKNX_SWA_GPIO_INPUT_ACTIVE_ON == HIGH ? LOW : HIGH
-
 #ifdef OPENKNX_SWA_SET_PINS
   const uint16_t RELAY_SET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SET_PINS};
   const uint16_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_RESET_PINS};
@@ -22,17 +15,31 @@
   const uint16_t RELAY_RESET_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {};
 #endif
 
+#ifdef OPENKNX_SWA_BL0942_SPI
+  const uint16_t RELAY_MEASURE_EN_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_MEASURE_EN_PINS};
+  const uint16_t RELAY_MEASURE_CS_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_MEASURE_CS_PINS};
+#endif
+
+#ifdef OPENKNX_SWA_STATUS_PINS
+const uint16_t RELAY_STATUS_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_STATUS_PINS};
+#endif
+#ifdef OPENKNX_SWA_SWITCH_PINS
+const uint16_t RELAY_SWITCH_PINS[OPENKNX_SWA_CHANNEL_COUNT] = {OPENKNX_SWA_SWITCH_PINS};
+#endif
+
 class SwitchActuatorModule : public OpenKNX::Module
 {
   public:
     SwitchActuatorModule();
     ~SwitchActuatorModule();
 
-    void processInputKo(GroupObject &iKo);
-    void setup(bool configured);
-    void loop();
+    void processInputKo(GroupObject &iKo) override;
+    void setup(bool configured) override;
+    void loop() override;
 
     void doSwitchChannel(uint8_t channelIndex, bool active, bool syncSwitch = true);
+
+    bool getChannelStatus(uint8_t channelIndex);
 
     void writeFlash() override;
     void readFlash(const uint8_t* data, const uint16_t size) override;
@@ -44,9 +51,17 @@ class SwitchActuatorModule : public OpenKNX::Module
     const std::string name() override;
     const std::string version() override;
 
+    void showHelp() override;
+    bool processCommand(const std::string cmd, bool diagnoseKo) override;
+    void runTestMode();
+
   private:
     SwitchActuatorChannel *channel[OPENKNX_SWA_CHANNEL_COUNT];
-    uint32_t chSwitchLastTrigger[OPENKNX_SWA_CHANNEL_COUNT] = {};
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    SwaStatus::ValueState _statusTotalCurrent;
+    SwaStatus::ValueState _statusTotalPower;
+#endif
 };
 
 extern SwitchActuatorModule openknxSwitchActuatorModule;
