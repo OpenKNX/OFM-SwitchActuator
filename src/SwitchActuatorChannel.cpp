@@ -74,7 +74,14 @@ void SwitchActuatorChannel::processSwitchInput(bool newActive)
 
     if (newActive == (bool)KoSWA_ChStatus.value(DPT_Switch))
     {
-        logDebugP("New value equals current status");
+        // resend status anyway, so a sender repeating its command because a previous status
+        // telegram got lost will receive the status again
+        logDebugP("New value equals current status, resend status");
+        KoSWA_ChStatus.value(newActive, DPT_Switch);
+
+        if (ParamSWA_ChStatusInverted)
+            KoSWA_ChStatusInverted.value(!newActive, DPT_Switch);
+
         return;
     }
 
