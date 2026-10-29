@@ -11,6 +11,13 @@
             <op:param name="%PPP%" value="26" increment="3" digits="3" />
           </op:part>
           <Static>
+            <ParameterTypes>
+              <ParameterType Id="%AID%_PT-SLEDFunc" Name="SLEDFunc">
+                <TypeRestriction Base="Value" SizeInBit="16" UIHint="DropDown">
+                  <Enumeration Text="Schaltaktorkanal %Z% Status" Value="8%CC%" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+            </ParameterTypes>
             <Parameters>
               <Parameter Id="%AID%_P-%TT%%CC%001" Name="Ch%C%Name" ParameterType="%AID%_PT-Text40Byte" Text="Beschreibung des Kanals" Value="" />
               <Parameter Id="%AID%_P-%TT%%CC%051" Name="Ch%C%Number" ParameterType="%AID%_PT-ValueDpt5" Text="Nummer des Kanals" Value="%C%" Access="None" />

@@ -452,6 +452,7 @@ void SwitchActuatorChannel::loop()
         }
     }
 #endif
+    openknx.ledFunctions.get(OPENKNX_LEDFUNC_SWA_CHANNEL_STATUS)->on(isRelayActive());
 #ifdef OPENKNX_SWA_STATUS_PINS
     if (ParamSWA_FrontControlOutput)
         openknx.gpio.digitalWrite(RELAY_STATUS_PINS[_channelIndex], isRelayActive() ? OPENKNX_SWA_STATUS_ACTIVE_ON : !OPENKNX_SWA_STATUS_ACTIVE_ON);
