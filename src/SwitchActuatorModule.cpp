@@ -169,7 +169,8 @@ void SwitchActuatorModule::writeFlash()
 
         bitWrite(byteValue, bitIndex, channel[i]->isRelayActive());
     }
-    openknx.flash.writeByte(byteValue);
+    if (MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT) > 0)
+        openknx.flash.writeByte(byteValue);
 
     logDebugP("Relays state written to flash");
 }
@@ -245,7 +246,7 @@ bool SwitchActuatorModule::processCommand(const std::string cmd, bool diagnoseKo
     // Commands starting with sa are our diagnose commands
     logInfoP("sa (SwitchActuator) command with bad args");
     if (diagnoseKo)
-        openknx.console.writeDiagenoseKo("sa: bad args");
+        openknx.console.writeDiagnoseKo("sa: bad args");
 
     return true;
 }
